@@ -1,16 +1,15 @@
 import Fastify from 'fastify';
 import { liveQueryStringSchema, timeframeQueryStringSchema } from './src/schemes.js';
 import { fetchLiveCurrencies, fetchTimeframe } from './src/api.js';
+import cors from '@fastify/cors';
 
 const fastify = Fastify({
   logger: true,
 });
 
-fastify.register(import('@fastify/cors'), {
+await fastify.register(cors, {
   origin: ['https://localhost:5173', 'https://tma-exchange-rate.vercel.app'],
   methods: ['GET', 'POST', 'PUT', 'DELETE'],
-  allowedHeaders: ['Content-Type', 'Authorization'],
-  credentials: true,
 });
 
 fastify.get('/', async (request, reply) => {
