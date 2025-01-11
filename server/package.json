@@ -18,9 +18,7 @@
   "description": "",
   "dependencies": {
     "@fastify/cors": "^10.0.2",
-    "conway-errors": "^3.1.1",
-    "fastify": "^5.2.1",
-    "qs": "^6.13.1"
+    "fastify": "^5.2.1"
   },
   "devDependencies": {
     "eslint": "^9.18.0",
