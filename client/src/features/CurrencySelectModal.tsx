@@ -1,9 +1,9 @@
 import { List, Input, Section, Cell, Modal } from "@telegram-apps/telegram-ui";
 import ReactCountryFlag from "react-country-flag";
-import { currencies } from "../pages/exchange/currencies";
+import { currencies } from "../pages/exchange/currencies.ts";
 import { action, atom } from "@reatom/framework";
 import { useAction, useAtom } from "@reatom/npm-react";
-import { currencyCountryCodes } from "../pages/exchange/country-codes";
+import { currencyCountryCodes } from "../pages/exchange/country-codes.ts";
 import { ModalHeader } from "@telegram-apps/telegram-ui/dist/components/Overlays/Modal/components/ModalHeader/ModalHeader";
 import React from "react";
 

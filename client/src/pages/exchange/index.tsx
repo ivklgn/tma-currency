@@ -25,11 +25,11 @@ import {
   onDeleteTargetCurrencyAction,
   onResetAmountAction,
   primaryCurrencyAtom,
-} from "./model";
-import { currencyCountryCodes } from "./country-codes";
-import { CurrencySelectModal } from "../../features/CurrencySelectModal";
-import { Icon24Close } from "../../components/patched-icons";
-import { formatMoney } from "../../helpers/money";
+} from "./model.ts";
+import { currencyCountryCodes } from "./country-codes.ts";
+import { CurrencySelectModal } from "../../features/CurrencySelectModal.tsx";
+import { Icon24Close } from "../../components/patched-icons.tsx";
+import { formatMoney } from "../../helpers/money.ts";
 
 import "./ExchangePage.css";
 

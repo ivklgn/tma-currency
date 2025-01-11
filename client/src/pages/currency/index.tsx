@@ -4,16 +4,16 @@ import { Page } from "@/components/Page.tsx";
 import ReactCountryFlag from "react-country-flag";
 import { useNavigate } from "react-router";
 import { useAction, useAtom } from "@reatom/npm-react";
-import { exchangeRatesResources } from "../exchange/model";
-import { currencyCountryCodes } from "../exchange/country-codes";
-import { formatMoney } from "../../helpers/money";
+import { exchangeRatesResources } from "../exchange/model.ts";
+import { currencyCountryCodes } from "../exchange/country-codes.ts";
+import { formatMoney } from "../../helpers/money.ts";
 import {
   currentCurrencyAtom,
   historicalFilterAtom,
   historicalRatesAtom,
   onChangeHistoricalFilterAction,
   primaryCurrencyAtom,
-} from "./model";
+} from "./model.ts";
 import { Chart } from "react-google-charts";
 import { miniApp, useSignal } from "@telegram-apps/sdk-react";
 

@@ -1,4 +1,4 @@
-import { APILayerError } from "./errors";
+import { APILayerError } from "./errors.ts";
 
 type EndpointsResponse = {
   "/list": {
@@ -40,7 +40,7 @@ type EndpointsResponse = {
 };
 
 function getAPIUrl(endpoint: keyof EndpointsResponse): string {
-  return `https://api.apilayer.com/currency_data${endpoint}`;
+  return `http://localhost:3000${endpoint}`;
 }
 
 export async function fetcher<K extends keyof EndpointsResponse>(
@@ -62,10 +62,6 @@ export async function fetcher<K extends keyof EndpointsResponse>(
 
   const response = await fetch(url + queryString, {
     signal: options?.signal,
-    headers: {
-      "Content-Type": "application/json",
-      apikey: "GgTYKJeF0V55n5Ve2JtWDM7OjeblUA6X",
-    },
   });
 
   if (!response.ok) {

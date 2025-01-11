@@ -7,7 +7,7 @@ import {
   $debug,
   init as initSDK,
 } from "@telegram-apps/sdk-react";
-import { setBackgroundAsSecondary } from "./helpers/set-background";
+import { setBackgroundAsSecondary } from "./helpers/set-background.ts";
 
 /**
  * Initializes the application and configures its dependencies.
