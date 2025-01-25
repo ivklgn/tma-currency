@@ -4,7 +4,7 @@ import { Page } from "@/components/Page.tsx";
 import ReactCountryFlag from "react-country-flag";
 import { useNavigate } from "react-router";
 import { useAction, useAtom } from "@reatom/npm-react";
-import { exchangeRatesResources } from "../exchange/model";
+// import { exchangeRatesResources } from "../exchange/model";
 import { currencyCountryCodes } from "../exchange/country-codes";
 import { formatMoney } from "../../helpers/money";
 import {
@@ -22,10 +22,14 @@ export const CurrencyPage: FC = () => {
   const [historicalFilter] = useAtom(historicalFilterAtom);
   const [primaryCurrency] = useAtom(primaryCurrencyAtom);
   const [currentCurrency] = useAtom(currentCurrencyAtom);
-  const [currentRate] = useAtom(
-    (ctx) => ctx.spy(exchangeRatesResources.dataAtom).filter((r) => r.currency === currentCurrency)?.[0],
-    [currentCurrency]
-  );
+  // const [currentRate] = useAtom(
+  //   (ctx) => ctx.spy(exchangeRatesResources.dataAtom).filter((r) => r.currency === currentCurrency)?.[0],
+  //   [currentCurrency]
+  // );
+
+  const currentRate = { currency: 'USD', rate: 123 }
+
+
   const handleChangeHistoricalFilterAction = useAction(onChangeHistoricalFilterAction);
   const [historicalRates] = useAtom(historicalRatesAtom.dataAtom);
   const [isLoadingHistoricalRates] = useAtom((ctx) => ctx.spy(historicalRatesAtom.pendingAtom) > 0);
