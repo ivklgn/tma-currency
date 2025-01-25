@@ -23,7 +23,7 @@ export const CurrencyPage: FC = () => {
   const [primaryCurrency] = useAtom(primaryCurrencyAtom);
   const [currentCurrency] = useAtom(currentCurrencyAtom);
   const [currentRate] = useAtom(
-    (ctx) => ctx.spy(targetCurrenciesAtom).quotes.filter((r) => r.currency === currentCurrency)?.[0],
+    (ctx) => ctx.spy(targetCurrenciesAtom).filter((r) => r.currency === currentCurrency)?.[0],
     [currentCurrency]
   );
 
