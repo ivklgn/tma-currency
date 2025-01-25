@@ -44,6 +44,11 @@ export const CurrencySelectModal: React.FC<CurrencySelectProps> = ({ opener, onS
   return (
     <Modal
       open={isOpen}
+      onOpenChange={(value) => {
+        if (!value) {
+          setOpen(false)
+        }
+      }}
       header={<ModalHeader>Choose currency</ModalHeader>}
       trigger={_opener}
       style={{ height: "calc(100vh - 300px)" }}
