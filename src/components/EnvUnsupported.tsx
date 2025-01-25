@@ -11,7 +11,8 @@ export function EnvUnsupported() {
       const { bgColor } = lp.themeParams;
       platform = lp.platform;
       isDark = bgColor && isRGB(bgColor) ? isColorDark(bgColor) : false;
-    } catch { /* empty */
+    } catch {
+      /* empty */
     }
 
     return [platform, isDark];

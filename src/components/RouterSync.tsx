@@ -1,7 +1,7 @@
-import React from "react";
-import { useLocation } from "react-router-dom";
-import { useCtx } from "@reatom/npm-react";
-import { updateFromSource, urlAtom } from "@reatom/url";
+import React from 'react';
+import { useLocation } from 'react-router-dom';
+import { useCtx } from '@reatom/npm-react';
+import { updateFromSource, urlAtom } from '@reatom/url';
 
 export const RouterSync = () => {
   const ctx = useCtx();
@@ -20,7 +20,7 @@ export const RouterSync = () => {
     setupRef.current = true;
 
     urlAtom.settingsAtom(ctx, {
-      init: () => new URL(currentHash || "/", location.origin), // Default to "/" if hash is empty
+      init: () => new URL(currentHash || '/', location.origin), // Default to "/" if hash is empty
       sync: (_ctx, url, replace) => {
         const newHash = `#${url.pathname}${url.search}`;
         if (replace) {
@@ -32,7 +32,7 @@ export const RouterSync = () => {
     });
 
     // Trigger `onChange` hooks.
-    urlAtom(ctx, new URL(currentHash || "/", location.origin));
+    urlAtom(ctx, new URL(currentHash || '/', location.origin));
   }
 
   return null;

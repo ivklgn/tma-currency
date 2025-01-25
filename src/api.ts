@@ -1,14 +1,15 @@
-import { APILayerError } from "./errors";
+import { APILayerError } from './errors';
+// import { retrieveLaunchParams } from '@telegram-apps/sdk-react';
 
 type EndpointsResponse = {
-  "/list": {
+  '/list': {
     params: undefined;
     response: {
       success: true;
       currencies: Record<string, string>;
     };
   };
-  "/live": {
+  '/live': {
     params: {
       source: string;
       currencies: string[];
@@ -20,7 +21,7 @@ type EndpointsResponse = {
       timestamp: number;
     };
   };
-  "/timeframe": {
+  '/timeframe': {
     params: {
       start_date: string;
       end_date: string;
@@ -45,32 +46,34 @@ function getAPIUrl(endpoint: keyof EndpointsResponse): string {
 
 export async function fetcher<K extends keyof EndpointsResponse>(
   endpoint: K,
-  params: EndpointsResponse[K]["params"],
+  params: EndpointsResponse[K]['params'],
   options?: { signal?: AbortSignal }
-): Promise<EndpointsResponse[K]["response"]> {
+) {
   const url = getAPIUrl(endpoint);
+  // const { initData } = retrieveLaunchParams();
 
   const queryString = params
-    ? "?" +
+    ? '?' +
       new URLSearchParams(
         Object.entries(params).reduce<Record<string, string>>((acc, [key, value]) => {
-          acc[key] = Array.isArray(value) ? value.join(",") : String(value);
+          acc[key] = Array.isArray(value) ? value.join(',') : String(value);
           return acc;
         }, {})
       ).toString()
-    : "";
+    : '';
 
   const response = await fetch(url + queryString, {
     signal: options?.signal,
     headers: {
-      "Content-Type": "application/json",
+      'Content-Type': 'application/json',
+      // "Telegram-Init-Data": JSON.stringify(initData)
     },
   });
 
   if (!response.ok) {
     const errorData = await response.json();
     throw APILayerError(
-      "BackendInteractionError",
+      'BackendInteractionError',
       `Error fetching data from ${endpoint}: ${response.status} ${response.statusText}, Details: ${JSON.stringify(
         errorData
       )}`,
@@ -87,5 +90,5 @@ export async function fetcher<K extends keyof EndpointsResponse>(
 
   const data = await response.json();
 
-  return data as EndpointsResponse[K]["response"];
+  return data as EndpointsResponse[K]['response'];
 }
