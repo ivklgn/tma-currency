@@ -1,13 +1,13 @@
 import {
-  Text,
-  Section,
-  Cell,
-  List,
-  ButtonCell,
-  Input,
-  Tappable,
-  Spinner,
-  Placeholder,
+    Text,
+    Section,
+    Cell,
+    List,
+    ButtonCell,
+    Input,
+    Tappable,
+    Spinner,
+    Placeholder, Snackbar,
 } from "@telegram-apps/telegram-ui";
 import { type FC } from "react";
 import { Icon28AddCircle } from "@telegram-apps/telegram-ui/dist/icons/28/add_circle";
@@ -17,14 +17,14 @@ import { Link } from "@/components/Link/Link.tsx";
 import { Page } from "@/components/Page.tsx";
 import { useAction, useAtom } from "@reatom/npm-react";
 import {
-  amountAtom,
-  exchangeRatesResources,
-  onChangeAmountAction,
-  onChangePrimaryCurrencyAction,
-  onChangeTargetCurrencyAction,
-  onDeleteTargetCurrencyAction,
-  onResetAmountAction,
-  primaryCurrencyAtom,
+    amountAtom, targetExchangeCurrenciesAtom, fetchExchangeRates,
+    isSynchronisationActiveAtom,
+    onChangeAmountAction,
+    onChangePrimaryCurrencyAction,
+    onChangeTargetCurrencyAction,
+    onDeleteTargetCurrencyAction,
+    onResetAmountAction,
+    primaryCurrencyAtom,
 } from "./model";
 import { currencyCountryCodes } from "./country-codes";
 import { CurrencySelectModal } from "../../features/CurrencySelectModal";
@@ -37,14 +37,21 @@ export const ExchangePage: FC = () => {
   const [isAddNewCurrencyFormVisible, setIsAddNewCurrencyFormVisible] = useAtom(false);
   const [amount] = useAtom(amountAtom);
   const [primaryCurrency] = useAtom(primaryCurrencyAtom);
-  const [exchangeRates] = useAtom(exchangeRatesResources.dataAtom);
-  const [exchangeRatesError] = useAtom(exchangeRatesResources.errorAtom);
-  const [isLoadingExchangeRates] = useAtom((ctx) => ctx.spy(exchangeRatesResources.pendingAtom) > 0);
+
+  // const [exchangeRatesError] = useAtom(exchangeRatesResources.errorAtom);
+  // const [isLoadingExchangeRates] = useAtom((ctx) => ctx.spy(exchangeRatesResources.pendingAtom) > 0);
+  const [exchangeRatesError] = useAtom(fetchExchangeRates.errorAtom);
+  const [isLoadingExchangeRates] = useAtom((ctx) => ctx.spy(fetchExchangeRates.pendingAtom) > 0);
+  const [exchangeRatesCache] = useAtom(targetExchangeCurrenciesAtom)
+  const [isSynchronisationActive] = useAtom(isSynchronisationActiveAtom)
+
   const handleChangeAmount = useAction(onChangeAmountAction);
   const handleDeleteTargetCurrency = useAction(onDeleteTargetCurrencyAction);
   const handleResetAmount = useAction(onResetAmountAction);
   const handleChangePrimaryCurrency = useAction(onChangePrimaryCurrencyAction);
   const handleChangeTargetCurrencyAction = useAction(onChangeTargetCurrencyAction);
+
+  const exchangeRateList = exchangeRatesCache.quotes
 
   const handleAddTargetCurrency = (currency: string) => {
     handleChangeTargetCurrencyAction(currency);
@@ -107,22 +114,15 @@ export const ExchangePage: FC = () => {
             />
           </Placeholder>
         )}
-
-        {isLoadingExchangeRates && (
-          <div style={{ display: "flex", justifyContent: "center" }}>
-            <Spinner size="m" />
-          </div>
-        )}
-
-        {!isLoadingExchangeRates && !exchangeRatesError && (
           <Section header="Exchange rate">
-            {!isAddNewCurrencyFormVisible && exchangeRates.length === 0 && (
+            {!isAddNewCurrencyFormVisible && exchangeRateList.length === 0 && (
               <Cell>
                 <Text>No selected exchange rates.</Text>
               </Cell>
             )}
-            {!isAddNewCurrencyFormVisible &&
-              exchangeRates.map((rate) => (
+
+            {!exchangeRatesError && !isAddNewCurrencyFormVisible &&
+                exchangeRateList.map((rate) => (
                 <Link to={`/exchange-rate?currency=${rate.currency}`} key={rate.currency}>
                   <Cell
                     before={
@@ -157,12 +157,24 @@ export const ExchangePage: FC = () => {
                   </Cell>
                 </Link>
               ))}
-            <CurrencySelectModal
+
+              {isSynchronisationActive && (
+                  <Snackbar
+                      before={<div style={{height: 24}}>
+                        <Spinner size="s"/>
+                      </div>}
+                      onClose={() => {}}
+                      duration={100_000}
+                  >
+                      Synchronization of exchange rates
+                  </Snackbar>
+              )}
+
+              <CurrencySelectModal
               opener={<ButtonCell before={<Icon28AddCircle />}>Add currency</ButtonCell>}
               onSelect={handleAddTargetCurrency}
             />
           </Section>
-        )}
       </List>
     </Page>
   );
