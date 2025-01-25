@@ -17,14 +17,14 @@ import { Link } from "@/components/Link/Link.tsx";
 import { Page } from "@/components/Page.tsx";
 import { useAction, useAtom } from "@reatom/npm-react";
 import {
-    amountAtom, targetExchangeCurrenciesAtom, fetchExchangeRates,
+    amountAtom, targetCurrenciesAtom,
     isSynchronisationActiveAtom,
     onChangeAmountAction,
     onChangePrimaryCurrencyAction,
     onChangeTargetCurrencyAction,
     onDeleteTargetCurrencyAction,
     onResetAmountAction,
-    primaryCurrencyAtom,
+    primaryCurrencyAtom, currenciesResources,
 } from "./model";
 import { currencyCountryCodes } from "./country-codes";
 import { CurrencySelectModal } from "../../features/CurrencySelectModal";
@@ -37,12 +37,9 @@ export const ExchangePage: FC = () => {
   const [isAddNewCurrencyFormVisible, setIsAddNewCurrencyFormVisible] = useAtom(false);
   const [amount] = useAtom(amountAtom);
   const [primaryCurrency] = useAtom(primaryCurrencyAtom);
-
-  // const [exchangeRatesError] = useAtom(exchangeRatesResources.errorAtom);
-  // const [isLoadingExchangeRates] = useAtom((ctx) => ctx.spy(exchangeRatesResources.pendingAtom) > 0);
-  const [exchangeRatesError] = useAtom(fetchExchangeRates.errorAtom);
-  const [isLoadingExchangeRates] = useAtom((ctx) => ctx.spy(fetchExchangeRates.pendingAtom) > 0);
-  const [exchangeRatesCache] = useAtom(targetExchangeCurrenciesAtom)
+  const [currenciesResourcesError] = useAtom(currenciesResources.errorAtom);
+  const [isLoadingExchangeRates] = useAtom((ctx) => ctx.spy(currenciesResources.pendingAtom) > 0);
+  const [targetCurrencies] = useAtom(targetCurrenciesAtom)
   const [isSynchronisationActive] = useAtom(isSynchronisationActiveAtom)
 
   const handleChangeAmount = useAction(onChangeAmountAction);
@@ -50,8 +47,6 @@ export const ExchangePage: FC = () => {
   const handleResetAmount = useAction(onResetAmountAction);
   const handleChangePrimaryCurrency = useAction(onChangePrimaryCurrencyAction);
   const handleChangeTargetCurrencyAction = useAction(onChangeTargetCurrencyAction);
-
-  const exchangeRateList = exchangeRatesCache.quotes
 
   const handleAddTargetCurrency = (currency: string) => {
     handleChangeTargetCurrencyAction(currency);
@@ -105,7 +100,7 @@ export const ExchangePage: FC = () => {
           />
         </Section>
 
-        {exchangeRatesError && (
+        {currenciesResourcesError && (
           <Placeholder header="Oops, something went wrong" description="Reload app or try later">
             <img
               alt="Telegram sticker"
@@ -114,15 +109,16 @@ export const ExchangePage: FC = () => {
             />
           </Placeholder>
         )}
+
           <Section header="Exchange rate">
-            {!isAddNewCurrencyFormVisible && exchangeRateList.length === 0 && (
+            {!isAddNewCurrencyFormVisible && targetCurrencies.length === 0 && (
               <Cell>
                 <Text>No selected exchange rates.</Text>
               </Cell>
             )}
 
-            {!exchangeRatesError && !isAddNewCurrencyFormVisible &&
-                exchangeRateList.map((rate) => (
+            {!currenciesResourcesError && !isAddNewCurrencyFormVisible &&
+                targetCurrencies.map((rate) => (
                 <Link to={`/exchange-rate?currency=${rate.currency}`} key={rate.currency}>
                   <Cell
                     before={
@@ -157,6 +153,12 @@ export const ExchangePage: FC = () => {
                   </Cell>
                 </Link>
               ))}
+
+              {!isSynchronisationActive && isLoadingExchangeRates && (
+                  <div style={{ display: "flex", justifyContent: "center", margin: '8px 0' }}>
+                      <Spinner size="m" />
+                  </div>
+              )}
 
               {isSynchronisationActive && (
                   <Snackbar
