@@ -76,24 +76,8 @@ export const currenciesResources = reatomResource(async (ctx) => {
     return [];
   }
 
-  // mock
-  // return await ctx.schedule(async () => {
-  //   const quotes = {
-  //     USDAED: 3.672955,
-  //   };
-
-  //   const rates = Object.entries(quotes).map(([currency, rate]) => ({
-  //     currency: currency.slice(3),
-  //     rate: rate > 0 ? rate : 1,
-  //   }));
-  //   return rates;
-  // });
-
   await ctx.schedule(() => sleep(400));
 
-  // await ctx.schedule(() => {
-  //   throw new Error("Network error");
-  // });
   const { signal } = ctx.controller;
   const { quotes } = await fetcher(
     '/live',
