@@ -1,85 +1,77 @@
-import { action, atom, reatomResource, sleep, withDataAtom, withErrorAtom } from "@reatom/framework";
-import { withLocalStorage } from "@reatom/persist-web-storage";
-import { fetcher } from "../../api";
+import {
+  action,
+  atom,
+  batch,
+  onConnect,
+  reatomResource,
+  sleep,
+  withErrorAtom,
+} from '@reatom/framework';
+import { withLocalStorage } from '@reatom/persist-web-storage';
+import { fetcher } from '../../api';
 
-export const amountAtom = atom(1, "amountAtom").pipe(withLocalStorage("amount"));
-export const primaryCurrencyAtom = atom("USD", "primaryCurrencyAtom").pipe(withLocalStorage("primaryCurrency"));
-export const targetExchangeCurrenciesAtom = atom<string[]>([], "targetExchangeCurrencies").pipe(
-  withLocalStorage("targetExchangeCurrencies")
-);
-
-// TODO: refactor
-function updateTargetExchangeCurrencies(currency: string) {
-  const key = "targetExchangeCurrencies";
-
-  // Получаем текущие данные из localStorage
-  const storedData = localStorage.getItem(key);
-
-  if (!storedData) {
-    console.warn("No data found in localStorage.");
-    return;
-  }
-
-  try {
-    // Парсим данные
-    const parsedData = JSON.parse(storedData);
-
-    // Убеждаемся, что структура корректная
-    if (!parsedData || !Array.isArray(parsedData.data)) {
-      console.error("Unexpected data format in localStorage.");
-      return;
-    }
-
-    // Фильтруем массив, удаляя указанный элемент
-    parsedData.data = parsedData.data.filter((r: unknown) => r !== currency);
-
-    // Сохраняем изменённые данные обратно
-    localStorage.setItem(key, JSON.stringify(parsedData));
-  } catch (error) {
-    console.error("Failed to parse or update localStorage data:", error);
-  }
+interface ITargetCurrency {
+  currency: string;
+  rate: number;
 }
 
+export const amountAtom = atom(1, 'amountAtom').pipe(withLocalStorage('amount'));
+export const primaryCurrencyAtom = atom('USD', 'primaryCurrencyAtom').pipe(
+  withLocalStorage('primaryCurrency')
+);
+export const targetCurrencyIdsAtom = atom<string[]>([], 'targetCurrencyIds');
+export const targetCurrenciesAtom = atom<ITargetCurrency[]>([], 'targetCurrencies').pipe(
+  withLocalStorage('targetCurrencies')
+);
+export const isSynchronisationActiveAtom = atom(true, 'isSynchronisationActive');
+
 export const onChangeAmountAction = action(
-  (ctx, event: React.ChangeEvent<HTMLInputElement>) => amountAtom(ctx, parseInt(event.currentTarget.value)),
-  "onChangeAmountAction"
+  (ctx, event: React.ChangeEvent<HTMLInputElement>) =>
+    amountAtom(ctx, parseInt(event.currentTarget.value)),
+  'onChangeAmountAction'
 );
 
-export const onResetAmountAction = action((ctx) => amountAtom(ctx, 1), "onResetAmountAction");
+export const onResetAmountAction = action((ctx) => amountAtom(ctx, 1), 'onResetAmountAction');
 
 export const onChangePrimaryCurrencyAction = action(
   (ctx, currency: string) => primaryCurrencyAtom(ctx, currency),
-  "onChangePrimaryCurrencyAction"
+  'onChangePrimaryCurrencyAction'
 );
 
 export const onChangeTargetCurrencyAction = action((ctx, currency: string) => {
-  const targetExchangeCurrencies = ctx.get(targetExchangeCurrenciesAtom);
-  if (!targetExchangeCurrencies.includes(currency)) {
-    targetExchangeCurrenciesAtom(ctx, [...targetExchangeCurrencies, currency]);
+  const targetCurrencyIds = ctx.get(targetCurrencyIdsAtom);
+
+  if (!targetCurrencyIds.includes(currency)) {
+    const newCurrencies = [...targetCurrencyIds, currency];
+
+    targetCurrencyIdsAtom(ctx, newCurrencies);
   }
-}, "onChangePrimaryCurrencyAction");
+}, 'onChangePrimaryCurrencyAction');
 
 export const onDeleteTargetCurrencyAction = action((ctx, currency: string) => {
-  const targetExchangeCurrencies = ctx.get(targetExchangeCurrenciesAtom);
-  const exchangeRates = ctx.get(exchangeRatesResources.dataAtom);
+  const targetCurrencyIds = ctx.get(targetCurrencyIdsAtom);
+  const targetCurrencies = ctx.get(targetCurrenciesAtom);
 
-  if (targetExchangeCurrencies.includes(currency)) {
-    exchangeRatesResources.dataAtom(
-      ctx,
-      exchangeRates.filter((r) => r.currency !== currency)
-    );
+  if (targetCurrencyIds.includes(currency)) {
+    const newCurrencies = targetCurrencyIds.filter((c) => c !== currency);
 
-    updateTargetExchangeCurrencies(currency);
+    batch(ctx, () => {
+      targetCurrencyIdsAtom(ctx, newCurrencies);
+      targetCurrenciesAtom(
+        ctx,
+        targetCurrencies.filter((c) => c.currency !== currency)
+      );
+    });
   }
-}, "onChangePrimaryCurrencyAction");
+}, 'onDeleteTargetCurrencyAction');
 
-export const exchangeRatesResources = reatomResource(async (ctx) => {
+export const currenciesResources = reatomResource(async (ctx) => {
   const primaryCurrency = ctx.spy(primaryCurrencyAtom);
-  const targetExchangeCurrencies = ctx.spy(targetExchangeCurrenciesAtom);
+  const targetCurrencyIds = ctx.spy(targetCurrencyIdsAtom);
 
   if (
-    targetExchangeCurrencies.length === 0 ||
-    (targetExchangeCurrencies.length === 1 && targetExchangeCurrencies[0] === primaryCurrency)
+    targetCurrencyIds.length === 0 ||
+    (targetCurrencyIds.length === 1 && targetCurrencyIds[0] === primaryCurrency)
   ) {
     return [];
   }
@@ -104,15 +96,36 @@ export const exchangeRatesResources = reatomResource(async (ctx) => {
   // });
   const { signal } = ctx.controller;
   const { quotes } = await fetcher(
-    "/live",
-    { source: primaryCurrency, currencies: targetExchangeCurrencies },
+    '/live',
+    { source: primaryCurrency, currencies: targetCurrencyIds },
     { signal }
   );
 
-  const rates = Object.entries(quotes).map(([currency, rate]) => ({
+  return Object.entries(quotes).map(([currency, rate]) => ({
     currency: currency.slice(3),
     rate: rate > 0 ? rate : 1,
   }));
+}, 'currenciesResources').pipe(withErrorAtom());
 
-  return rates;
-}, "exchangeRates").pipe(withDataAtom([]), withErrorAtom());
+currenciesResources.onFulfill.onCall((ctx, data) => {
+  const isSynchronisationActive = ctx.get(isSynchronisationActiveAtom);
+
+  if (isSynchronisationActive) {
+    isSynchronisationActiveAtom(ctx, false);
+  }
+
+  targetCurrenciesAtom(ctx, data);
+});
+
+onConnect(targetCurrenciesAtom, (ctx) => {
+  const targetCurrencies = ctx.get(targetCurrenciesAtom);
+
+  if (!targetCurrencies.length) {
+    return;
+  }
+
+  targetCurrencyIdsAtom(
+    ctx,
+    targetCurrencies.map((q) => q.currency)
+  );
+});

@@ -6,8 +6,8 @@ import {
   initData,
   $debug,
   init as initSDK,
-} from "@telegram-apps/sdk-react";
-import { setBackgroundAsSecondary } from "./helpers/set-background";
+} from '@telegram-apps/sdk-react';
+import { setBackgroundAsSecondary } from './helpers/set-background';
 
 /**
  * Initializes the application and configures its dependencies.
@@ -25,7 +25,7 @@ export function init(debug: boolean): void {
 
   // Check if all required components are supported.
   if (!backButton.isSupported() || !miniApp.isSupported()) {
-    throw new Error("ERR_NOT_SUPPORTED");
+    throw new Error('ERR_NOT_SUPPORTED');
   }
 
   // Mount all components used in the project.
@@ -36,7 +36,7 @@ export function init(debug: boolean): void {
   void viewport
     .mount()
     .catch((e) => {
-      console.error("Something went wrong mounting the viewport", e);
+      console.error('Something went wrong mounting the viewport', e);
     })
     .then(() => {
       viewport.bindCssVars();

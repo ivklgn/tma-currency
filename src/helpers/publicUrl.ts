@@ -17,7 +17,8 @@ export function publicUrl(path: string): string {
   try {
     new URL(baseUrl);
     isBaseAbsolute = true;
-  } catch { /* empty */
+  } catch {
+    /* empty */
   }
 
   return new URL(
@@ -26,8 +27,6 @@ export function publicUrl(path: string): string {
     // equal to "/tonconnect-manifest.json", we will not get the expected result like
     // "/my-base/tonconnect-manifest.json", but "/tonconnect-manifest.json".
     path.replace(/^\/+/, ''),
-    isBaseAbsolute
-      ? baseUrl
-      : window.location.origin + baseUrl,
+    isBaseAbsolute ? baseUrl : window.location.origin + baseUrl
   ).toString();
 }

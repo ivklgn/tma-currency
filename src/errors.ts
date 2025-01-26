@@ -1,11 +1,11 @@
-import { createError } from "conway-errors";
+import { createError } from 'conway-errors';
 
 const createErrorCtx = createError([
-  { errorType: "FrontendLogicError" },
-  { errorType: "BackendInteractionError" },
-  { errorType: "TelegramError" },
+  { errorType: 'FrontendLogicError' },
+  { errorType: 'BackendInteractionError' },
+  { errorType: 'TelegramError' },
 ] as const);
 
-export const errorCtx = createErrorCtx("TMA-exchange");
+export const errorCtx = createErrorCtx('TMA-exchange');
 
-export const APILayerError = errorCtx.feature("APILayerError");
+export const APILayerError = errorCtx.feature('APILayerError');

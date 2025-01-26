@@ -1,11 +1,11 @@
-import { Icon } from "@telegram-apps/telegram-ui/dist/types/Icon";
-import { miniApp, useSignal } from "@telegram-apps/sdk-react";
+import { Icon } from '@telegram-apps/telegram-ui/dist/types/Icon';
+import { miniApp, useSignal } from '@telegram-apps/sdk-react';
 
 export const Icon24Close = ({ ...restProps }: Icon) => {
   const isDark = useSignal(miniApp.isDark);
   return (
     <svg width="24" height="24" fill="none" xmlns="http://www.w3.org/2000/svg" {...restProps}>
-      <g opacity=".5" fill={isDark ? "#fff" : "#000"} clipPath="url(#close_a)">
+      <g opacity=".5" fill={isDark ? '#fff' : '#000'} clipPath="url(#close_a)">
         <path
           d="M12 24c6.5647 0 12-5.4471 12-12 0-6.56471-5.4471-12-12.0118-12C5.43529 0 0 5.43529 0 12c0 6.5529 5.44705 12 12 12Z"
           fillOpacity=".04"

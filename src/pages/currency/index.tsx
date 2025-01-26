@@ -1,21 +1,21 @@
-import { Section, Cell, List, Chip, Spinner, Placeholder } from "@telegram-apps/telegram-ui";
-import { useEffect, useMemo, type FC } from "react";
-import { Page } from "@/components/Page.tsx";
-import ReactCountryFlag from "react-country-flag";
-import { useNavigate } from "react-router";
-import { useAction, useAtom } from "@reatom/npm-react";
-import { exchangeRatesResources } from "../exchange/model";
-import { currencyCountryCodes } from "../exchange/country-codes";
-import { formatMoney } from "../../helpers/money";
+import { Section, Cell, List, Chip, Spinner, Placeholder } from '@telegram-apps/telegram-ui';
+import { useEffect, useMemo, type FC } from 'react';
+import { Page } from '@/components/Page.tsx';
+import ReactCountryFlag from 'react-country-flag';
+import { useNavigate } from 'react-router';
+import { useAction, useAtom } from '@reatom/npm-react';
+import { targetCurrenciesAtom } from '../exchange/model';
+import { currencyCountryCodes } from '../exchange/country-codes';
+import { formatMoney } from '../../helpers/money';
 import {
   currentCurrencyAtom,
   historicalFilterAtom,
   historicalRatesAtom,
   onChangeHistoricalFilterAction,
   primaryCurrencyAtom,
-} from "./model";
-import { Chart } from "react-google-charts";
-import { miniApp, useSignal } from "@telegram-apps/sdk-react";
+} from './model';
+import { Chart } from 'react-google-charts';
+import { miniApp, useSignal } from '@telegram-apps/sdk-react';
 
 export const CurrencyPage: FC = () => {
   const navigate = useNavigate();
@@ -23,9 +23,10 @@ export const CurrencyPage: FC = () => {
   const [primaryCurrency] = useAtom(primaryCurrencyAtom);
   const [currentCurrency] = useAtom(currentCurrencyAtom);
   const [currentRate] = useAtom(
-    (ctx) => ctx.spy(exchangeRatesResources.dataAtom).filter((r) => r.currency === currentCurrency)?.[0],
+    (ctx) => ctx.spy(targetCurrenciesAtom).filter((r) => r.currency === currentCurrency)?.[0],
     [currentCurrency]
   );
+
   const handleChangeHistoricalFilterAction = useAction(onChangeHistoricalFilterAction);
   const [historicalRates] = useAtom(historicalRatesAtom.dataAtom);
   const [isLoadingHistoricalRates] = useAtom((ctx) => ctx.spy(historicalRatesAtom.pendingAtom) > 0);
@@ -33,13 +34,13 @@ export const CurrencyPage: FC = () => {
   const isDark = useSignal(miniApp.isDark);
 
   const historicalData = useMemo(
-    () => [["date", "rate"], ...historicalRates.map((hr) => [hr.date, hr.rate])],
+    () => [['date', 'rate'], ...historicalRates.map((hr) => [hr.date, hr.rate])],
     [historicalRates]
   );
 
   useEffect(() => {
     if (!currentCurrency || !primaryCurrency) {
-      navigate("/");
+      navigate('/');
     }
   }, [currentCurrency]);
 
@@ -56,8 +57,8 @@ export const CurrencyPage: FC = () => {
               <ReactCountryFlag
                 countryCode={currencyCountryCodes[currentRate.currency]}
                 style={{
-                  fontSize: "2em",
-                  lineHeight: "2em",
+                  fontSize: '2em',
+                  lineHeight: '2em',
                 }}
               />
             }
@@ -71,7 +72,7 @@ export const CurrencyPage: FC = () => {
         </Section>
 
         {isLoadingHistoricalRates && (
-          <div style={{ display: "flex", justifyContent: "center" }}>
+          <div style={{ display: 'flex', justifyContent: 'center' }}>
             <Spinner size="m" />
           </div>
         )}
@@ -79,31 +80,31 @@ export const CurrencyPage: FC = () => {
         {!isLoadingHistoricalRates && !historicalRatesError && historicalData.length > 0 && (
           <div
             style={{
-              display: "flex",
+              display: 'flex',
               gap: 16,
             }}
           >
             <Chip
-              mode={historicalFilter === "3d" ? "mono" : "outline"}
-              onClick={() => handleChangeHistoricalFilterAction("3d")}
+              mode={historicalFilter === '3d' ? 'mono' : 'outline'}
+              onClick={() => handleChangeHistoricalFilterAction('3d')}
             >
               3d
             </Chip>
             <Chip
-              mode={historicalFilter === "1w" ? "mono" : "outline"}
-              onClick={() => handleChangeHistoricalFilterAction("1w")}
+              mode={historicalFilter === '1w' ? 'mono' : 'outline'}
+              onClick={() => handleChangeHistoricalFilterAction('1w')}
             >
               1w
             </Chip>
             <Chip
-              mode={historicalFilter === "1m" ? "mono" : "outline"}
-              onClick={() => handleChangeHistoricalFilterAction("1m")}
+              mode={historicalFilter === '1m' ? 'mono' : 'outline'}
+              onClick={() => handleChangeHistoricalFilterAction('1m')}
             >
               1m
             </Chip>
             <Chip
-              mode={historicalFilter === "1y" ? "mono" : "outline"}
-              onClick={() => handleChangeHistoricalFilterAction("1y")}
+              mode={historicalFilter === '1y' ? 'mono' : 'outline'}
+              onClick={() => handleChangeHistoricalFilterAction('1y')}
             >
               1y
             </Chip>
@@ -118,22 +119,22 @@ export const CurrencyPage: FC = () => {
               height="340px"
               data={historicalData}
               options={{
-                curveType: "function",
+                curveType: 'function',
                 backgroundColor: {
-                  fill: isDark ? "#0f0f0f" : "#fff",
-                  stroke: "",
+                  fill: isDark ? '#0f0f0f' : '#fff',
+                  stroke: '',
                   strokeWidth: 0,
                 },
-                legend: "none",
+                legend: 'none',
                 hAxis: {
                   gridlines: { count: 3 },
                   textStyle: {
-                    color: isDark ? "#708499" : "#0f0f0f",
+                    color: isDark ? '#708499' : '#0f0f0f',
                   },
                 },
                 vAxis: {
                   textStyle: {
-                    color: isDark ? "#708499" : "#0f0f0f",
+                    color: isDark ? '#708499' : '#0f0f0f',
                   },
                 },
               }}
@@ -146,7 +147,7 @@ export const CurrencyPage: FC = () => {
             <img
               alt="Telegram sticker"
               src="https://xelene.me/telegram.gif"
-              style={{ display: "block", width: "144px", height: "144px" }}
+              style={{ display: 'block', width: '144px', height: '144px' }}
             />
           </Placeholder>
         )}
