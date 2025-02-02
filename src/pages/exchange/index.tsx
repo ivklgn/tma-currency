@@ -6,8 +6,8 @@ import {
   ButtonCell,
   Input,
   Tappable,
-  Spinner,
   Placeholder,
+  Spinner,
   Snackbar,
 } from '@telegram-apps/telegram-ui';
 import { type FC } from 'react';
@@ -20,14 +20,14 @@ import { useAction, useAtom } from '@reatom/npm-react';
 import {
   amountAtom,
   targetCurrenciesAtom,
-  isSynchronisationActiveAtom,
   onChangeAmountAction,
   onChangePrimaryCurrencyAction,
   onChangeTargetCurrencyAction,
   onDeleteTargetCurrencyAction,
   onResetAmountAction,
   primaryCurrencyAtom,
-  currenciesResources,
+  fetchExchangeRates,
+  isSynchronisationActiveAtom,
 } from './model';
 import { currencyCountryCodes } from './country-codes';
 import { CurrencySelectModal } from '../../features/CurrencySelectModal';
@@ -40,8 +40,8 @@ export const ExchangePage: FC = () => {
   const [isAddNewCurrencyFormVisible, setIsAddNewCurrencyFormVisible] = useAtom(false);
   const [amount] = useAtom(amountAtom);
   const [primaryCurrency] = useAtom(primaryCurrencyAtom);
-  const [currenciesResourcesError] = useAtom(currenciesResources.errorAtom);
-  const [isLoadingExchangeRates] = useAtom((ctx) => ctx.spy(currenciesResources.pendingAtom) > 0);
+  const [exchangeRatesError] = useAtom(fetchExchangeRates.errorAtom);
+  const [isLoadingExchangeRates] = useAtom((ctx) => ctx.spy(fetchExchangeRates.pendingAtom) > 0);
   const [targetCurrencies] = useAtom(targetCurrenciesAtom);
   const [isSynchronisationActive] = useAtom(isSynchronisationActiveAtom);
 
@@ -103,7 +103,7 @@ export const ExchangePage: FC = () => {
           />
         </Section>
 
-        {currenciesResourcesError && (
+        {exchangeRatesError && (
           <Placeholder header="Oops, something went wrong" description="Reload app or try later">
             <img
               alt="Telegram sticker"
@@ -120,7 +120,7 @@ export const ExchangePage: FC = () => {
             </Cell>
           )}
 
-          {!currenciesResourcesError &&
+          {!exchangeRatesError &&
             !isAddNewCurrencyFormVisible &&
             targetCurrencies.map((rate) => (
               <Link to={`/exchange-rate?currency=${rate.currency}`} key={rate.currency}>

@@ -3,8 +3,10 @@ import {
   atom,
   batch,
   onConnect,
-  reatomResource,
+  reatomAsync,
   sleep,
+  withAbort,
+  withDataAtom,
   withErrorAtom,
 } from '@reatom/framework';
 import { withLocalStorage } from '@reatom/persist-web-storage';
@@ -38,6 +40,20 @@ export const onChangePrimaryCurrencyAction = action(
   'onChangePrimaryCurrencyAction'
 );
 
+export const getNewExchangeRates = action((ctx) => {
+  const primaryCurrency = ctx.get(primaryCurrencyAtom);
+  const targetCurrencyIds = ctx.get(targetCurrencyIdsAtom);
+
+  if (
+    targetCurrencyIds.length === 0 ||
+    (targetCurrencyIds.length === 1 && targetCurrencyIds[0] === primaryCurrency)
+  ) {
+    return;
+  }
+
+  fetchExchangeRates(ctx, primaryCurrency, targetCurrencyIds);
+});
+
 export const onChangeTargetCurrencyAction = action((ctx, currency: string) => {
   const targetCurrencyIds = ctx.get(targetCurrencyIdsAtom);
 
@@ -45,6 +61,7 @@ export const onChangeTargetCurrencyAction = action((ctx, currency: string) => {
     const newCurrencies = [...targetCurrencyIds, currency];
 
     targetCurrencyIdsAtom(ctx, newCurrencies);
+    getNewExchangeRates(ctx);
   }
 }, 'onChangePrimaryCurrencyAction');
 
@@ -65,67 +82,41 @@ export const onDeleteTargetCurrencyAction = action((ctx, currency: string) => {
   }
 }, 'onDeleteTargetCurrencyAction');
 
-export const currenciesResources = reatomResource(async (ctx) => {
-  const primaryCurrency = ctx.spy(primaryCurrencyAtom);
-  const targetCurrencyIds = ctx.spy(targetCurrencyIdsAtom);
+export const fetchExchangeRates = reatomAsync(
+  async (ctx, primaryCurrency: string, targetCurrencies: string[]) => {
+    await ctx.schedule(() => sleep(400));
 
-  if (
-    targetCurrencyIds.length === 0 ||
-    (targetCurrencyIds.length === 1 && targetCurrencyIds[0] === primaryCurrency)
-  ) {
-    return [];
-  }
+    const { quotes } = await fetcher<'/live'>(
+      '/live',
+      { source: primaryCurrency, currencies: targetCurrencies },
+      { signal: ctx.controller.signal }
+    );
 
-  // mock
-  // return await ctx.schedule(async () => {
-  //   const quotes = {
-  //     USDAED: 3.672955,
-  //   };
+    return Object.entries(quotes).map(([currency, rate]) => ({
+      currency: currency.slice(3),
+      rate: rate > 0 ? rate : 1,
+    }));
+  },
+  'fetchExchangeRates'
+).pipe(withDataAtom([]), withErrorAtom(), withAbort());
 
-  //   const rates = Object.entries(quotes).map(([currency, rate]) => ({
-  //     currency: currency.slice(3),
-  //     rate: rate > 0 ? rate : 1,
-  //   }));
-  //   return rates;
-  // });
-
-  await ctx.schedule(() => sleep(400));
-
-  // await ctx.schedule(() => {
-  //   throw new Error("Network error");
-  // });
-  const { signal } = ctx.controller;
-  const { quotes } = await fetcher(
-    '/live',
-    { source: primaryCurrency, currencies: targetCurrencyIds },
-    { signal }
-  );
-
-  return Object.entries(quotes).map(([currency, rate]) => ({
-    currency: currency.slice(3),
-    rate: rate > 0 ? rate : 1,
-  }));
-}, 'currenciesResources').pipe(withErrorAtom());
-
-currenciesResources.onFulfill.onCall((ctx, data) => {
+fetchExchangeRates.onFulfill.onCall((ctx, payload) => {
   const isSynchronisationActive = ctx.get(isSynchronisationActiveAtom);
 
   if (isSynchronisationActive) {
     isSynchronisationActiveAtom(ctx, false);
   }
 
-  targetCurrenciesAtom(ctx, data);
+  targetCurrenciesAtom(ctx, payload);
 });
 
 onConnect(targetCurrenciesAtom, (ctx) => {
   const targetCurrencies = ctx.get(targetCurrenciesAtom);
 
-  if (!targetCurrencies.length) {
-    return;
-  }
-
   targetCurrencyIdsAtom(
     ctx,
     targetCurrencies.map((q) => q.currency)
   );
+
+  return getNewExchangeRates(ctx);
 });
