@@ -7,8 +7,6 @@ import {
   Input,
   Tappable,
   Placeholder,
-  Spinner,
-  Snackbar,
 } from '@telegram-apps/telegram-ui';
 import { type FC } from 'react';
 import { Icon28AddCircle } from '@telegram-apps/telegram-ui/dist/icons/28/add_circle';
@@ -27,7 +25,6 @@ import {
   onResetAmountAction,
   primaryCurrencyAtom,
   fetchExchangeRates,
-  isSynchronisationActiveAtom,
 } from './model';
 import { currencyCountryCodes } from './country-codes';
 import { CurrencySelectModal } from '../../features/CurrencySelectModal';
@@ -41,9 +38,7 @@ export const ExchangePage: FC = () => {
   const [amount] = useAtom(amountAtom);
   const [primaryCurrency] = useAtom(primaryCurrencyAtom);
   const [exchangeRatesError] = useAtom(fetchExchangeRates.errorAtom);
-  const [isLoadingExchangeRates] = useAtom((ctx) => ctx.spy(fetchExchangeRates.pendingAtom) > 0);
   const [targetCurrencies] = useAtom(targetCurrenciesAtom);
-  const [isSynchronisationActive] = useAtom(isSynchronisationActiveAtom);
 
   const handleChangeAmount = useAction(onChangeAmountAction);
   const handleDeleteTargetCurrency = useAction(onDeleteTargetCurrencyAction);
@@ -157,26 +152,6 @@ export const ExchangePage: FC = () => {
                 </Cell>
               </Link>
             ))}
-
-          {!isSynchronisationActive && isLoadingExchangeRates && (
-            <div style={{ display: 'flex', justifyContent: 'center', margin: '8px 0' }}>
-              <Spinner size="m" />
-            </div>
-          )}
-
-          {isSynchronisationActive && (
-            <Snackbar
-              before={
-                <div style={{ height: 24 }}>
-                  <Spinner size="s" />
-                </div>
-              }
-              onClose={() => {}}
-              duration={100_000}
-            >
-              Synchronization of exchange rates
-            </Snackbar>
-          )}
 
           <CurrencySelectModal
             opener={<ButtonCell before={<Icon28AddCircle />}>Add currency</ButtonCell>}

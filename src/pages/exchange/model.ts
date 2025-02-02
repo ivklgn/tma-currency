@@ -11,6 +11,7 @@ import {
 } from '@reatom/framework';
 import { withLocalStorage } from '@reatom/persist-web-storage';
 import { fetcher } from '../../api';
+import { withProgress } from '@/helpers/progress';
 
 interface ITargetCurrency {
   currency: string;
@@ -25,8 +26,6 @@ export const targetCurrencyIdsAtom = atom<string[]>([], 'targetCurrencyIds');
 export const targetCurrenciesAtom = atom<ITargetCurrency[]>([], 'targetCurrencies').pipe(
   withLocalStorage('targetCurrencies')
 );
-export const isSynchronisationActiveAtom = atom(true, 'isSynchronisationActive');
-
 export const onChangeAmountAction = action(
   (ctx, event: React.ChangeEvent<HTMLInputElement>) =>
     amountAtom(ctx, parseInt(event.currentTarget.value)),
@@ -98,15 +97,9 @@ export const fetchExchangeRates = reatomAsync(
     }));
   },
   'fetchExchangeRates'
-).pipe(withDataAtom([]), withErrorAtom(), withAbort());
+).pipe(withDataAtom([]), withErrorAtom(), withAbort(), withProgress());
 
 fetchExchangeRates.onFulfill.onCall((ctx, payload) => {
-  const isSynchronisationActive = ctx.get(isSynchronisationActiveAtom);
-
-  if (isSynchronisationActive) {
-    isSynchronisationActiveAtom(ctx, false);
-  }
-
   targetCurrenciesAtom(ctx, payload);
 });
 
