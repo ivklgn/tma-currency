@@ -1,5 +1,5 @@
 import { AsyncAction, Ctx } from '@reatom/framework';
-import { isProgressVisibleAtom } from '@/features/ProgressBar';
+import { isProgressVisibleAtom } from '@/features/ProgressBar/model';
 
 export const withProgress =
   <T extends AsyncAction>() =>
