@@ -85,10 +85,11 @@ export const fetchExchangeRates = reatomAsync(
   async (ctx, primaryCurrency: string, targetCurrencies: string[]) => {
     await ctx.schedule(() => sleep(400));
 
+    const { signal } = ctx.controller;
     const { quotes } = await fetcher<'/live'>(
       '/live',
       { source: primaryCurrency, currencies: targetCurrencies },
-      { signal: ctx.controller.signal }
+      { signal: signal }
     );
 
     return Object.entries(quotes).map(([currency, rate]) => ({
@@ -105,6 +106,10 @@ fetchExchangeRates.onFulfill.onCall((ctx, payload) => {
 
 onConnect(targetCurrenciesAtom, (ctx) => {
   const targetCurrencies = ctx.get(targetCurrenciesAtom);
+
+  if (!targetCurrencies.length) {
+    return;
+  }
 
   targetCurrencyIdsAtom(
     ctx,

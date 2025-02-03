@@ -51,25 +51,23 @@ export const CurrencyPage: FC = () => {
   return (
     <Page back>
       <List>
-        <Section>
-          <Cell
-            before={
-              <ReactCountryFlag
-                countryCode={currencyCountryCodes[currentRate.currency]}
-                style={{
-                  fontSize: '2em',
-                  lineHeight: '2em',
-                }}
-              />
-            }
-            subtitle={`${formatMoney(1, primaryCurrency)} ${primaryCurrency} = ${formatMoney(
-              currentRate.rate,
-              currentRate.currency
-            )} ${currentRate.currency}`}
-          >
-            {`${formatMoney(currentRate.rate || 1, currentRate.currency)} ${currentRate.currency} `}
-          </Cell>
-        </Section>
+        <Cell
+          before={
+            <ReactCountryFlag
+              countryCode={currencyCountryCodes[currentRate.currency]}
+              style={{
+                fontSize: '2em',
+                lineHeight: '2em',
+              }}
+            />
+          }
+          subtitle={`${formatMoney(1, primaryCurrency)} ${primaryCurrency} = ${formatMoney(
+            currentRate.rate,
+            currentRate.currency
+          )} ${currentRate.currency}`}
+        >
+          {`${formatMoney(currentRate.rate || 1, currentRate.currency)} ${currentRate.currency} `}
+        </Cell>
 
         {!isLoadingHistoricalRates && !historicalRatesError && historicalData.length > 0 && (
           <div
