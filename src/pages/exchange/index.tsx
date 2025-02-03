@@ -6,9 +6,7 @@ import {
   ButtonCell,
   Input,
   Tappable,
-  Spinner,
   Placeholder,
-  Snackbar,
 } from '@telegram-apps/telegram-ui';
 import { type FC } from 'react';
 import { Icon28AddCircle } from '@telegram-apps/telegram-ui/dist/icons/28/add_circle';
@@ -20,14 +18,13 @@ import { useAction, useAtom } from '@reatom/npm-react';
 import {
   amountAtom,
   targetCurrenciesAtom,
-  isSynchronisationActiveAtom,
   onChangeAmountAction,
   onChangePrimaryCurrencyAction,
   onChangeTargetCurrencyAction,
   onDeleteTargetCurrencyAction,
   onResetAmountAction,
   primaryCurrencyAtom,
-  currenciesResources,
+  fetchExchangeRates,
 } from './model';
 import { currencyCountryCodes } from './country-codes';
 import { CurrencySelectModal } from '../../features/CurrencySelectModal';
@@ -40,10 +37,8 @@ export const ExchangePage: FC = () => {
   const [isAddNewCurrencyFormVisible, setIsAddNewCurrencyFormVisible] = useAtom(false);
   const [amount] = useAtom(amountAtom);
   const [primaryCurrency] = useAtom(primaryCurrencyAtom);
-  const [currenciesResourcesError] = useAtom(currenciesResources.errorAtom);
-  const [isLoadingExchangeRates] = useAtom((ctx) => ctx.spy(currenciesResources.pendingAtom) > 0);
+  const [exchangeRatesError] = useAtom(fetchExchangeRates.errorAtom);
   const [targetCurrencies] = useAtom(targetCurrenciesAtom);
-  const [isSynchronisationActive] = useAtom(isSynchronisationActiveAtom);
 
   const handleChangeAmount = useAction(onChangeAmountAction);
   const handleDeleteTargetCurrency = useAction(onDeleteTargetCurrencyAction);
@@ -103,7 +98,7 @@ export const ExchangePage: FC = () => {
           />
         </Section>
 
-        {currenciesResourcesError && (
+        {exchangeRatesError && (
           <Placeholder header="Oops, something went wrong" description="Reload app or try later">
             <img
               alt="Telegram sticker"
@@ -120,7 +115,7 @@ export const ExchangePage: FC = () => {
             </Cell>
           )}
 
-          {!currenciesResourcesError &&
+          {!exchangeRatesError &&
             !isAddNewCurrencyFormVisible &&
             targetCurrencies.map((rate) => (
               <Link to={`/exchange-rate?currency=${rate.currency}`} key={rate.currency}>
@@ -157,26 +152,6 @@ export const ExchangePage: FC = () => {
                 </Cell>
               </Link>
             ))}
-
-          {!isSynchronisationActive && isLoadingExchangeRates && (
-            <div style={{ display: 'flex', justifyContent: 'center', margin: '8px 0' }}>
-              <Spinner size="m" />
-            </div>
-          )}
-
-          {isSynchronisationActive && (
-            <Snackbar
-              before={
-                <div style={{ height: 24 }}>
-                  <Spinner size="s" />
-                </div>
-              }
-              onClose={() => {}}
-              duration={100_000}
-            >
-              Synchronization of exchange rates
-            </Snackbar>
-          )}
 
           <CurrencySelectModal
             opener={<ButtonCell before={<Icon28AddCircle />}>Add currency</ButtonCell>}

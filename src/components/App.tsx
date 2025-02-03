@@ -4,6 +4,7 @@ import { Navigate, Route, Routes, HashRouter } from 'react-router-dom';
 import { RouterSync } from './RouterSync';
 
 import { routes } from '@/routes';
+import { BaseLayout } from '@/layouts/BaseLayout.tsx';
 
 export function App() {
   const lp = useLaunchParams();
@@ -17,10 +18,12 @@ export function App() {
       <HashRouter>
         <RouterSync />
         <Routes>
-          {routes.map((route) => (
-            <Route key={route.path} {...route} />
-          ))}
-          <Route path="*" element={<Navigate to="/" />} />
+          <Route path="/" element={<BaseLayout />}>
+            {routes.map((route) => (
+              <Route key={route.path} {...route} />
+            ))}
+            <Route path="*" element={<Navigate to="/" />} />
+          </Route>
         </Routes>
       </HashRouter>
     </AppRoot>

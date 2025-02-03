@@ -1,4 +1,4 @@
-import { Section, Cell, List, Chip, Spinner, Placeholder } from '@telegram-apps/telegram-ui';
+import { Section, Cell, List, Chip, Placeholder } from '@telegram-apps/telegram-ui';
 import { useEffect, useMemo, type FC } from 'react';
 import { Page } from '@/components/Page.tsx';
 import ReactCountryFlag from 'react-country-flag';
@@ -68,12 +68,6 @@ export const CurrencyPage: FC = () => {
         >
           {`${formatMoney(currentRate.rate || 1, currentRate.currency)} ${currentRate.currency} `}
         </Cell>
-
-        {isLoadingHistoricalRates && (
-          <div style={{ display: 'flex', justifyContent: 'center' }}>
-            <Spinner size="m" />
-          </div>
-        )}
 
         {!isLoadingHistoricalRates && !historicalRatesError && historicalData.length > 0 && (
           <div
