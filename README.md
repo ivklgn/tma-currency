@@ -5,5 +5,5 @@
 .env
 
 ```sh
-API_URL=<api url>
+API_URL=<VERCEL_SERVERLESS_URL>
 ```
