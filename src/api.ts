@@ -1,5 +1,5 @@
 import { APILayerError } from './errors';
-// import { retrieveLaunchParams } from '@telegram-apps/sdk-react';
+import { retrieveLaunchParams } from '@telegram-apps/sdk-react';
 
 type EndpointsResponse = {
   '/list': {
@@ -50,7 +50,7 @@ export async function fetcher<K extends keyof EndpointsResponse>(
   options?: { signal?: AbortSignal }
 ) {
   const url = getAPIUrl(endpoint);
-  // const { initData } = retrieveLaunchParams();
+  const { initData } = retrieveLaunchParams();
 
   const queryString = params
     ? '?' +
@@ -66,7 +66,7 @@ export async function fetcher<K extends keyof EndpointsResponse>(
     signal: options?.signal,
     headers: {
       'Content-Type': 'application/json',
-      // "Telegram-Init-Data": JSON.stringify(initData)
+      init_data: JSON.stringify(initData),
     },
   });
 
