@@ -153,10 +153,12 @@ export const ExchangePage: FC = () => {
               </Link>
             ))}
 
-          <CurrencySelectModal
-            opener={<ButtonCell before={<Icon28AddCircle />}>Add currency</ButtonCell>}
-            onSelect={handleAddTargetCurrency}
-          />
+          {!exchangeRatesError && (
+            <CurrencySelectModal
+              opener={<ButtonCell before={<Icon28AddCircle />}>Add currency</ButtonCell>}
+              onSelect={handleAddTargetCurrency}
+            />
+          )}
         </Section>
       </List>
     </Page>
