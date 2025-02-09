@@ -50,7 +50,7 @@ export async function fetcher<K extends keyof EndpointsResponse>(
   options?: { signal?: AbortSignal }
 ) {
   const url = getAPIUrl(endpoint);
-  const { initData } = retrieveLaunchParams();
+  const { initDataRaw } = retrieveLaunchParams();
 
   const queryString = params
     ? '?' +
@@ -66,7 +66,7 @@ export async function fetcher<K extends keyof EndpointsResponse>(
     signal: options?.signal,
     headers: {
       'Content-Type': 'application/json',
-      init_data: JSON.stringify(initData),
+      init_data: JSON.stringify(initDataRaw),
     },
   });
 
