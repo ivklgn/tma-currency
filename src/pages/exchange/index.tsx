@@ -108,58 +108,57 @@ export const ExchangePage: FC = () => {
           </Placeholder>
         )}
 
-        <Section header="Exchange rate">
-          {!isAddNewCurrencyFormVisible && targetCurrencies.length === 0 && (
-            <Cell>
-              <Text>No selected exchange rates.</Text>
-            </Cell>
-          )}
+        {!exchangeRatesError && (
+          <Section header="Exchange rate">
+            {!isAddNewCurrencyFormVisible && targetCurrencies.length === 0 && (
+              <Cell>
+                <Text>No selected exchange rates.</Text>
+              </Cell>
+            )}
 
-          {!exchangeRatesError &&
-            !isAddNewCurrencyFormVisible &&
-            targetCurrencies.map((rate) => (
-              <Link to={`/exchange-rate?currency=${rate.currency}`} key={rate.currency}>
-                <Cell
-                  before={
-                    <ReactCountryFlag
-                      countryCode={currencyCountryCodes[rate.currency]}
-                      style={{
-                        fontSize: '2em',
-                        lineHeight: '2em',
-                      }}
-                    />
-                  }
-                  after={
-                    <Tappable
-                      Component="div"
-                      style={{
-                        display: 'flex',
-                      }}
-                      onClick={(e) => {
-                        e.preventDefault();
-                        handleDeleteTargetCurrency(rate.currency);
-                      }}
-                    >
-                      <Icon24Close />
-                    </Tappable>
-                  }
-                  subtitle={`${formatMoney(amount || 1, primaryCurrency)} ${primaryCurrency} = ${formatMoney(
-                    rate.rate * (amount || 1),
-                    rate.currency
-                  )} ${rate.currency}`}
-                >
-                  {`${formatMoney(rate.rate, rate.currency)} ${rate.currency}`}
-                </Cell>
-              </Link>
-            ))}
+            {!isAddNewCurrencyFormVisible &&
+              targetCurrencies.map((rate) => (
+                <Link to={`/exchange-rate?currency=${rate.currency}`} key={rate.currency}>
+                  <Cell
+                    before={
+                      <ReactCountryFlag
+                        countryCode={currencyCountryCodes[rate.currency]}
+                        style={{
+                          fontSize: '2em',
+                          lineHeight: '2em',
+                        }}
+                      />
+                    }
+                    after={
+                      <Tappable
+                        Component="div"
+                        style={{
+                          display: 'flex',
+                        }}
+                        onClick={(e) => {
+                          e.preventDefault();
+                          handleDeleteTargetCurrency(rate.currency);
+                        }}
+                      >
+                        <Icon24Close />
+                      </Tappable>
+                    }
+                    subtitle={`${formatMoney(amount || 1, primaryCurrency)} ${primaryCurrency} = ${formatMoney(
+                      rate.rate * (amount || 1),
+                      rate.currency
+                    )} ${rate.currency}`}
+                  >
+                    {`${formatMoney(rate.rate, rate.currency)} ${rate.currency}`}
+                  </Cell>
+                </Link>
+              ))}
 
-          {!exchangeRatesError && (
             <CurrencySelectModal
               opener={<ButtonCell before={<Icon28AddCircle />}>Add currency</ButtonCell>}
               onSelect={handleAddTargetCurrency}
             />
-          )}
-        </Section>
+          </Section>
+        )}
       </List>
     </Page>
   );
