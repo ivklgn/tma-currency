@@ -66,7 +66,7 @@ export async function fetcher<K extends keyof EndpointsResponse>(
     signal: options?.signal,
     headers: {
       'Content-Type': 'application/json',
-      init_data: JSON.stringify(initDataRaw),
+      init_data: initDataRaw || '',
     },
   });
 
