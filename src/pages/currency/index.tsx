@@ -1,4 +1,4 @@
-import { Section, Cell, List, Chip, Placeholder } from '@telegram-apps/telegram-ui';
+import { Section, Cell, List, Chip, Placeholder, Spinner } from '@telegram-apps/telegram-ui';
 import { useEffect, useMemo, type FC } from 'react';
 import { Page } from '@/components/Page.tsx';
 import ReactCountryFlag from 'react-country-flag';
@@ -15,7 +15,23 @@ import {
   primaryCurrencyAtom,
 } from './model';
 import { Chart } from 'react-google-charts';
-import { miniApp, useSignal } from '@telegram-apps/sdk-react';
+import { classNames, miniApp, useSignal } from '@telegram-apps/sdk-react';
+
+import './CurrencyPage.css';
+
+function getRandomArbitrary(min: number, max: number) {
+  return Math.random() * (max - min) + min;
+}
+
+export function generateFakeRates(startDate: Date, numberRange: [number, number]) {
+  return Array.from({ length: 8 }).map(() => {
+    const date = new Date(startDate.setDate(startDate.getDate() + 1)).toISOString().split('T')[0];
+
+    return [date, getRandomArbitrary(...numberRange)];
+  });
+}
+
+const fakeHistoricalData = [['date', 'rate'], ...generateFakeRates(new Date(), [19, 20])];
 
 export const CurrencyPage: FC = () => {
   const navigate = useNavigate();
@@ -69,7 +85,7 @@ export const CurrencyPage: FC = () => {
           {`${formatMoney(currentRate.rate || 1, currentRate.currency)} ${currentRate.currency} `}
         </Cell>
 
-        {!isLoadingHistoricalRates && !historicalRatesError && historicalData.length > 0 && (
+        {!historicalRatesError && historicalData.length > 0 && (
           <div
             style={{
               display: 'flex',
@@ -77,24 +93,28 @@ export const CurrencyPage: FC = () => {
             }}
           >
             <Chip
+              disabled={isLoadingHistoricalRates}
               mode={historicalFilter === '3d' ? 'mono' : 'outline'}
               onClick={() => handleChangeHistoricalFilterAction('3d')}
             >
               3d
             </Chip>
             <Chip
+              disabled={isLoadingHistoricalRates}
               mode={historicalFilter === '1w' ? 'mono' : 'outline'}
               onClick={() => handleChangeHistoricalFilterAction('1w')}
             >
               1w
             </Chip>
             <Chip
+              disabled={isLoadingHistoricalRates}
               mode={historicalFilter === '1m' ? 'mono' : 'outline'}
               onClick={() => handleChangeHistoricalFilterAction('1m')}
             >
               1m
             </Chip>
             <Chip
+              disabled={isLoadingHistoricalRates}
               mode={historicalFilter === '1y' ? 'mono' : 'outline'}
               onClick={() => handleChangeHistoricalFilterAction('1y')}
             >
@@ -103,34 +123,43 @@ export const CurrencyPage: FC = () => {
           </div>
         )}
 
-        {!isLoadingHistoricalRates && !historicalRatesError && historicalData.length > 0 && (
+        {!historicalRatesError && historicalData.length > 0 && (
           <Section>
-            <Chart
-              chartType="LineChart"
-              width="100%"
-              height="340px"
-              data={historicalData}
-              options={{
-                curveType: 'function',
-                backgroundColor: {
-                  fill: isDark ? '#0f0f0f' : '#fff',
-                  stroke: '',
-                  strokeWidth: 0,
-                },
-                legend: 'none',
-                hAxis: {
-                  gridlines: { count: 3 },
-                  textStyle: {
-                    color: isDark ? '#708499' : '#0f0f0f',
+            <div className="chartWrapper">
+              {isLoadingHistoricalRates && (
+                <div className="chartSpinner">
+                  <Spinner size="m" />
+                </div>
+              )}
+
+              <Chart
+                className={classNames(isLoadingHistoricalRates && 'chart_withBlur')}
+                chartType="LineChart"
+                width="100%"
+                height="340px"
+                data={historicalRates.length ? historicalData : fakeHistoricalData}
+                options={{
+                  curveType: 'function',
+                  backgroundColor: {
+                    fill: isDark ? '#0f0f0f' : '#fff',
+                    stroke: '',
+                    strokeWidth: 0,
                   },
-                },
-                vAxis: {
-                  textStyle: {
-                    color: isDark ? '#708499' : '#0f0f0f',
+                  legend: 'none',
+                  hAxis: {
+                    gridlines: { count: 3 },
+                    textStyle: {
+                      color: isDark ? '#708499' : '#0f0f0f',
+                    },
                   },
-                },
-              }}
-            />
+                  vAxis: {
+                    textStyle: {
+                      color: isDark ? '#708499' : '#0f0f0f',
+                    },
+                  },
+                }}
+              />
+            </div>
           </Section>
         )}
 
