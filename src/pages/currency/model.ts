@@ -1,7 +1,6 @@
 import {
   action,
   atom,
-  isInit,
   reatomResource,
   sleep,
   withCache,
@@ -79,7 +78,9 @@ export const historicalRatesAtom = reatomResource(async (ctx) => {
 );
 
 historicalRatesAtom.onFulfill.onCall((ctx, data) => {
-  if (isInit(ctx)) {
+  const activeFilter = ctx.get(historicalFilterAtom);
+
+  if (activeFilter === '3d') {
     localStorage.setItem('historicalRatesCache', JSON.stringify(data));
   }
 });
