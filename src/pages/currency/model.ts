@@ -1,6 +1,7 @@
 import {
   action,
   atom,
+  isInit,
   reatomResource,
   sleep,
   withCache,
@@ -11,7 +12,6 @@ import { withLocalStorage } from '@reatom/persist-web-storage';
 import { fetcher } from '../../api';
 import { searchParamsAtom } from '@reatom/url';
 import { formatDate } from '../../helpers/date';
-import { withProgress } from '@/helpers/progress.ts';
 
 type HistoricalFilter = '3d' | '1w' | '1m' | '1y';
 
@@ -75,6 +75,11 @@ export const historicalRatesAtom = reatomResource(async (ctx) => {
 }, 'historicalRatesAtom').pipe(
   withDataAtom([]),
   withCache({ length: 10, swr: false }),
-  withErrorAtom(),
-  withProgress()
+  withErrorAtom()
 );
+
+historicalRatesAtom.onFulfill.onCall((ctx, data) => {
+  if (isInit(ctx)) {
+    localStorage.setItem('historicalRatesCache', JSON.stringify(data));
+  }
+});

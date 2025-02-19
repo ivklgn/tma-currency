@@ -18,20 +18,7 @@ import { Chart } from 'react-google-charts';
 import { classNames, miniApp, useSignal } from '@telegram-apps/sdk-react';
 
 import './CurrencyPage.css';
-
-function getRandomArbitrary(min: number, max: number) {
-  return Math.random() * (max - min) + min;
-}
-
-export function generateFakeRates(startDate: Date, numberRange: [number, number]) {
-  return Array.from({ length: 8 }).map(() => {
-    const date = new Date(startDate.setDate(startDate.getDate() + 1)).toISOString().split('T')[0];
-
-    return [date, getRandomArbitrary(...numberRange)];
-  });
-}
-
-const fakeHistoricalData = [['date', 'rate'], ...generateFakeRates(new Date(), [19, 20])];
+import { getHistoricalRatesCache, isRatesValid, withChartData } from '@/pages/currency/utils';
 
 export const CurrencyPage: FC = () => {
   const navigate = useNavigate();
@@ -49,10 +36,13 @@ export const CurrencyPage: FC = () => {
   const [historicalRatesError] = useAtom(historicalRatesAtom.errorAtom);
   const isDark = useSignal(miniApp.isDark);
 
-  const historicalData = useMemo(
-    () => [['date', 'rate'], ...historicalRates.map((hr) => [hr.date, hr.rate])],
-    [historicalRates]
-  );
+  const historicalData = useMemo(() => {
+    if (historicalRates.length && isRatesValid(historicalRates)) {
+      return withChartData(historicalRates);
+    }
+
+    return withChartData(getHistoricalRatesCache());
+  }, [historicalRates]);
 
   useEffect(() => {
     if (!currentCurrency || !primaryCurrency) {
@@ -133,11 +123,11 @@ export const CurrencyPage: FC = () => {
               )}
 
               <Chart
-                className={classNames(isLoadingHistoricalRates && 'chart_withBlur')}
+                className={classNames('chart', isLoadingHistoricalRates && 'chart_loading')}
                 chartType="LineChart"
                 width="100%"
                 height="340px"
-                data={historicalRates.length ? historicalData : fakeHistoricalData}
+                data={historicalData}
                 options={{
                   curveType: 'function',
                   backgroundColor: {
