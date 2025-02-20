@@ -16,9 +16,9 @@ import {
 } from './model';
 import { Chart } from 'react-google-charts';
 import { classNames, miniApp, useSignal } from '@telegram-apps/sdk-react';
+import { getHistoricalRatesCache, prepareRates, withChartData } from '@/pages/currency/utils';
 
 import './CurrencyPage.css';
-import { getHistoricalRatesCache, isRatesValid, withChartData } from '@/pages/currency/utils';
 
 export const CurrencyPage: FC = () => {
   const navigate = useNavigate();
@@ -37,8 +37,8 @@ export const CurrencyPage: FC = () => {
   const isDark = useSignal(miniApp.isDark);
 
   const historicalData = useMemo(() => {
-    if (historicalRates.length && isRatesValid(historicalRates)) {
-      return withChartData(historicalRates);
+    if (historicalRates.length) {
+      return withChartData(prepareRates(historicalRates));
     }
 
     return withChartData(getHistoricalRatesCache());

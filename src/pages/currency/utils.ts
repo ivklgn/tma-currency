@@ -1,22 +1,33 @@
-// TODO research: иногда withCache ломается и отдает { date: string, rate: undefined }
-export function isRatesValid(rates: { date: string; rate: number }[]) {
+import { getLocalStorageValue } from '@/helpers/localStorage.ts';
+import { IHistoricalRate } from '@/pages/currency/model.ts';
+
+export function isRatesValid(rates: IHistoricalRate[]) {
   return !rates.find((rateObj) => Object.values(rateObj).some((v) => !v));
 }
 
-export function withChartData(list: { date: string; rate: number }[]) {
+export function prepareRates(rates: IHistoricalRate[]) {
+  // empty value check for chart
+  if (!isRatesValid(rates)) {
+    return rates.map((rateObj) => ({
+      date: rateObj.date ?? new Date().toISOString().split('T')[0],
+      rate: rateObj.rate ?? 0,
+    }));
+  }
+
+  return rates;
+}
+
+export function withChartData(list: IHistoricalRate[]) {
   return [['date', 'rate'], ...list.map((hr) => [hr.date, hr.rate])];
 }
 
 export function getHistoricalRatesCache() {
-  const data = localStorage.getItem('historicalRatesCache');
+  const defaultData: unknown[] = [];
+  const data = getLocalStorageValue('historicalRatesCache', defaultData);
 
-  if (data) {
-    const parsedData = JSON.parse(data);
-
-    if (Array.isArray(parsedData)) {
-      return parsedData;
-    }
+  if (Array.isArray(data)) {
+    return data;
   }
 
-  return [];
+  return defaultData;
 }

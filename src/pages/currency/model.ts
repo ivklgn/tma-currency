@@ -11,8 +11,15 @@ import { withLocalStorage } from '@reatom/persist-web-storage';
 import { fetcher } from '../../api';
 import { searchParamsAtom } from '@reatom/url';
 import { formatDate } from '../../helpers/date';
+import { setLocalStorageValue } from '@/helpers/localStorage.ts';
+import { prepareRates } from '@/pages/currency/utils.ts';
 
 type HistoricalFilter = '3d' | '1w' | '1m' | '1y';
+
+export interface IHistoricalRate {
+  date: string;
+  rate: number;
+}
 
 export const historicalFilterAtom = atom<HistoricalFilter>('3d', 'historicalFilterAtom');
 export const primaryCurrencyAtom = atom('USD', 'primaryCurrencyAtom').pipe(
@@ -47,7 +54,7 @@ function convertFilterToEndDate(historicalFilter: HistoricalFilter) {
   return date;
 }
 
-export const historicalRatesAtom = reatomResource(async (ctx) => {
+export const historicalRatesAtom = reatomResource<IHistoricalRate[]>(async (ctx) => {
   const primaryCurrency = ctx.spy(primaryCurrencyAtom);
   const currentCurrency = ctx.spy(currentCurrencyAtom);
   const historicalFilter = ctx.spy(historicalFilterAtom);
@@ -81,6 +88,6 @@ historicalRatesAtom.onFulfill.onCall((ctx, data) => {
   const activeFilter = ctx.get(historicalFilterAtom);
 
   if (activeFilter === '3d') {
-    localStorage.setItem('historicalRatesCache', JSON.stringify(data));
+    setLocalStorageValue('historicalRatesCache', prepareRates(data));
   }
 });
