@@ -1,0 +1,28 @@
+.chartWrapper {
+    --scale-ratio: 1;
+    --blur-ratio: 0;
+
+    position: relative;
+    overflow: hidden;
+    background-color: #0F0F0FFF;
+}
+
+.chart {
+    transition-property: transform, filter;
+    transition-duration: .2s;
+    transform: scale(var(--scale-ratio));
+    filter: blur(var(--blur-ratio));
+}
+
+.chart_loading {
+    --scale-ratio: 0.97;
+    --blur-ratio: 4px;
+}
+
+.chartSpinner {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 1;
+}
