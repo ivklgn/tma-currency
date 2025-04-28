@@ -1,6 +1,7 @@
 import { APILayerError } from './errors';
 import { retrieveLaunchParams } from '@telegram-apps/sdk-react';
 
+// https://apilayer.com/marketplace/exchangerates_data-api#rate-limits
 type EndpointsResponse = {
   '/list': {
     params: undefined;
