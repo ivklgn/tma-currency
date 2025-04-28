@@ -15,10 +15,7 @@ type EndpointsResponse = {
       currencies: string[];
     };
     response: {
-      quotes: Record<string, number>;
-      source: string;
-      success: true;
-      timestamp: number;
+      rates: Record<string, number>;
     };
   };
   '/timeframe': {
@@ -29,13 +26,7 @@ type EndpointsResponse = {
       source: string;
     };
     response: {
-      quotes: Record<string, Record<string, number>>;
-      source: string;
-      success: true;
-      timeframe: true;
-      timestamp: number;
-      start_date: string;
-      end_date: string;
+      rates: Record<string, Record<string, number>>;
     };
   };
 };

@@ -64,7 +64,7 @@ export const historicalRatesAtom = reatomResource<IHistoricalRate[]>(async (ctx)
   const startDate = convertFilterToEndDate(historicalFilter);
 
   const { signal } = ctx.controller;
-  const { quotes } = await fetcher(
+  const { rates } = await fetcher(
     '/timeframe',
     {
       currencies: [currentCurrency],
@@ -75,8 +75,8 @@ export const historicalRatesAtom = reatomResource<IHistoricalRate[]>(async (ctx)
     { signal }
   );
 
-  return Object.entries(quotes).map(([date, rate]) => {
-    return { date, rate: rate[`${primaryCurrency}${currentCurrency}`] };
+  return Object.entries(rates).map(([date, rate]) => {
+    return { date, rate: rate[currentCurrency] };
   });
 }, 'historicalRatesAtom').pipe(
   withDataAtom([]),

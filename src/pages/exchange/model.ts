@@ -86,14 +86,14 @@ export const fetchExchangeRates = reatomAsync(
     await ctx.schedule(() => sleep(400));
 
     const { signal } = ctx.controller;
-    const { quotes } = await fetcher<'/live'>(
+    const { rates } = await fetcher<'/live'>(
       '/live',
       { source: primaryCurrency, currencies: targetCurrencies },
       { signal: signal }
     );
 
-    return Object.entries(quotes).map(([currency, rate]) => ({
-      currency: currency.slice(3),
+    return Object.entries(rates).map(([currency, rate]) => ({
+      currency,
       rate: rate > 0 ? rate : 1,
     }));
   },
