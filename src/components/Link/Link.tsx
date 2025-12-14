@@ -1,10 +1,10 @@
 import { openLink } from '@telegram-apps/sdk-react';
-import { type FC, type MouseEventHandler, useCallback } from 'react';
+import { type MouseEventHandler, useCallback } from 'react';
 import { Link as RouterLink, type LinkProps } from 'react-router-dom';
 
 import './Link.css';
 
-export const Link: FC<LinkProps> = ({ className, onClick: propsOnClick, to, ...rest }) => {
+export function Link({ className, onClick: propsOnClick, to, ...rest }: LinkProps) {
   const onClick = useCallback<MouseEventHandler<HTMLAnchorElement>>(
     (e) => {
       propsOnClick?.(e);
@@ -40,4 +40,4 @@ export const Link: FC<LinkProps> = ({ className, onClick: propsOnClick, to, ...r
       className={className ? `${className} link` : 'link'}
     />
   );
-};
+}

@@ -1,7 +1,7 @@
-import { Icon } from '@telegram-apps/telegram-ui/dist/types/Icon';
+import type { Icon } from '@telegram-apps/telegram-ui/dist/types/Icon';
 import { miniApp, useSignal } from '@telegram-apps/sdk-react';
 
-export const Icon24Close = ({ ...restProps }: Icon) => {
+export function Icon24Close({ ...restProps }: Icon) {
   const isDark = useSignal(miniApp.isDark);
   return (
     <svg width="24" height="24" fill="none" xmlns="http://www.w3.org/2000/svg" {...restProps}>
@@ -22,4 +22,4 @@ export const Icon24Close = ({ ...restProps }: Icon) => {
       </defs>
     </svg>
   );
-};
+}

@@ -1,5 +1,5 @@
 import { Section, Cell, List, Chip, Placeholder, Spinner } from '@telegram-apps/telegram-ui';
-import { useEffect, useMemo, type FC } from 'react';
+import { useEffect, useMemo } from 'react';
 import { Page } from '@/components/Page.tsx';
 import ReactCountryFlag from 'react-country-flag';
 import { useNavigate } from 'react-router';
@@ -20,7 +20,7 @@ import { getHistoricalRatesCache, prepareRates, withChartData } from '@/pages/cu
 
 import './CurrencyPage.css';
 
-export const CurrencyPage: FC = () => {
+export function CurrencyPage() {
   const navigate = useNavigate();
   const [historicalFilter] = useAtom(historicalFilterAtom);
   const [primaryCurrency] = useAtom(primaryCurrencyAtom);
@@ -48,7 +48,7 @@ export const CurrencyPage: FC = () => {
     if (!currentCurrency || !primaryCurrency) {
       navigate('/');
     }
-  }, [currentCurrency]);
+  }, [currentCurrency, primaryCurrency, navigate]);
 
   if (!currentRate) {
     return null;
@@ -165,4 +165,4 @@ export const CurrencyPage: FC = () => {
       </List>
     </Page>
   );
-};
+}

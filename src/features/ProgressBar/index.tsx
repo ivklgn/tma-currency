@@ -3,7 +3,7 @@ import { isProgressVisibleAtom } from '@/features/ProgressBar/model';
 
 import './ProgressBar.css';
 
-export const ProgressBar = () => {
+export function ProgressBar() {
   const [isProgressVisible] = useAtom(isProgressVisibleAtom);
 
   if (!isProgressVisible) {
@@ -11,4 +11,4 @@ export const ProgressBar = () => {
   }
 
   return <div className="progressBar" />;
-};
+}

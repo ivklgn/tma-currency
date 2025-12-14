@@ -1,11 +1,11 @@
-import React from 'react';
+import { useRef } from 'react';
 import { useLocation } from 'react-router-dom';
 import { useCtx } from '@reatom/npm-react';
 import { updateFromSource, urlAtom } from '@reatom/url';
 
-export const RouterSync = () => {
+export function RouterSync() {
   const ctx = useCtx();
-  const setupRef = React.useRef(false);
+  const setupRef = useRef(false);
 
   // Subscribe to location changes
   useLocation();
@@ -36,4 +36,4 @@ export const RouterSync = () => {
   }
 
   return null;
-};
+}

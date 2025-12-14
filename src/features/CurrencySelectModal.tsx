@@ -1,3 +1,4 @@
+import { type ChangeEvent, type ReactNode, cloneElement, isValidElement } from 'react';
 import { List, Input, Section, Cell, Modal } from '@telegram-apps/telegram-ui';
 import ReactCountryFlag from 'react-country-flag';
 import { currencies } from '../pages/exchange/currencies';
@@ -5,7 +6,6 @@ import { action, atom } from '@reatom/framework';
 import { useAction, useAtom } from '@reatom/npm-react';
 import { currencyCountryCodes } from '../pages/exchange/country-codes';
 import { ModalHeader } from '@telegram-apps/telegram-ui/dist/components/Overlays/Modal/components/ModalHeader/ModalHeader';
-import React from 'react';
 
 const searchCurrenciesAtom = atom('', 'searchCurrenciesAtom');
 const filteredCurrenciesAtom = atom(
@@ -17,28 +17,24 @@ const filteredCurrenciesAtom = atom(
     ),
   'filteredCurrenciesAtom'
 );
-const onChangeSearch = action((ctx, event: React.ChangeEvent<HTMLInputElement>) => {
+const onChangeSearch = action((ctx, event: ChangeEvent<HTMLInputElement>) => {
   searchCurrenciesAtom(ctx, event.currentTarget.value);
 }, 'onChangeSearch');
 
 interface CurrencySelectProps {
-  opener: React.ReactNode;
+  opener: ReactNode;
   onSelect?: (currencyCode: string) => void;
 }
 
-export const CurrencySelectModal: React.FC<CurrencySelectProps> = ({ opener, onSelect }) => {
+export function CurrencySelectModal({ opener, onSelect }: CurrencySelectProps) {
   const [isOpen, setOpen] = useAtom(false);
   const [search] = useAtom(searchCurrenciesAtom);
   const [filteredCurrencies] = useAtom(filteredCurrenciesAtom);
   const handleChangeSearch = useAction(onChangeSearch);
 
-  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  // @ts-ignore
-  const _opener = React.cloneElement(opener, {
-    onClick: () => {
-      setOpen(true);
-    },
-  });
+  const _opener = isValidElement<{ onClick?: () => void }>(opener)
+    ? cloneElement(opener, { onClick: () => setOpen(true) })
+    : opener;
 
   return (
     <Modal
@@ -84,4 +80,4 @@ export const CurrencySelectModal: React.FC<CurrencySelectProps> = ({ opener, onS
       </List>
     </Modal>
   );
-};
+}

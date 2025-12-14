@@ -8,7 +8,6 @@ import {
   Tappable,
   Placeholder,
 } from '@telegram-apps/telegram-ui';
-import { type FC } from 'react';
 import { Icon28AddCircle } from '@telegram-apps/telegram-ui/dist/icons/28/add_circle';
 import { Icon20ChevronDown } from '@telegram-apps/telegram-ui/dist/icons/20/chevron_down';
 import ReactCountryFlag from 'react-country-flag';
@@ -33,8 +32,7 @@ import { formatMoney } from '../../helpers/money';
 
 import './ExchangePage.css';
 
-export const ExchangePage: FC = () => {
-  const [isAddNewCurrencyFormVisible, setIsAddNewCurrencyFormVisible] = useAtom(false);
+export function ExchangePage() {
   const [amount] = useAtom(amountAtom);
   const [primaryCurrency] = useAtom(primaryCurrencyAtom);
   const [exchangeRatesError] = useAtom(fetchExchangeRates.errorAtom);
@@ -44,12 +42,7 @@ export const ExchangePage: FC = () => {
   const handleDeleteTargetCurrency = useAction(onDeleteTargetCurrencyAction);
   const handleResetAmount = useAction(onResetAmountAction);
   const handleChangePrimaryCurrency = useAction(onChangePrimaryCurrencyAction);
-  const handleChangeTargetCurrencyAction = useAction(onChangeTargetCurrencyAction);
-
-  const handleAddTargetCurrency = (currency: string) => {
-    handleChangeTargetCurrencyAction(currency);
-    setIsAddNewCurrencyFormVisible(false);
-  };
+  const handleAddTargetCurrency = useAction(onChangeTargetCurrencyAction);
 
   return (
     <Page>
@@ -110,48 +103,47 @@ export const ExchangePage: FC = () => {
 
         {!exchangeRatesError && (
           <Section header="Exchange rate">
-            {!isAddNewCurrencyFormVisible && targetCurrencies.length === 0 && (
+            {targetCurrencies.length === 0 && (
               <Cell>
                 <Text>No selected exchange rates.</Text>
               </Cell>
             )}
 
-            {!isAddNewCurrencyFormVisible &&
-              targetCurrencies.map((rate) => (
-                <Link to={`/exchange-rate?currency=${rate.currency}`} key={rate.currency}>
-                  <Cell
-                    before={
-                      <ReactCountryFlag
-                        countryCode={currencyCountryCodes[rate.currency]}
-                        style={{
-                          fontSize: '2em',
-                          lineHeight: '2em',
-                        }}
-                      />
-                    }
-                    after={
-                      <Tappable
-                        Component="div"
-                        style={{
-                          display: 'flex',
-                        }}
-                        onClick={(e) => {
-                          e.preventDefault();
-                          handleDeleteTargetCurrency(rate.currency);
-                        }}
-                      >
-                        <Icon24Close />
-                      </Tappable>
-                    }
-                    subtitle={`${formatMoney(amount || 1, primaryCurrency)} ${primaryCurrency} = ${formatMoney(
-                      rate.rate * (amount || 1),
-                      rate.currency
-                    )} ${rate.currency}`}
-                  >
-                    {`${formatMoney(rate.rate, rate.currency)} ${rate.currency}`}
-                  </Cell>
-                </Link>
-              ))}
+            {targetCurrencies.map((rate) => (
+              <Link to={`/exchange-rate?currency=${rate.currency}`} key={rate.currency}>
+                <Cell
+                  before={
+                    <ReactCountryFlag
+                      countryCode={currencyCountryCodes[rate.currency]}
+                      style={{
+                        fontSize: '2em',
+                        lineHeight: '2em',
+                      }}
+                    />
+                  }
+                  after={
+                    <Tappable
+                      Component="div"
+                      style={{
+                        display: 'flex',
+                      }}
+                      onClick={(e) => {
+                        e.preventDefault();
+                        handleDeleteTargetCurrency(rate.currency);
+                      }}
+                    >
+                      <Icon24Close />
+                    </Tappable>
+                  }
+                  subtitle={`${formatMoney(amount || 1, primaryCurrency)} ${primaryCurrency} = ${formatMoney(
+                    rate.rate * (amount || 1),
+                    rate.currency
+                  )} ${rate.currency}`}
+                >
+                  {`${formatMoney(rate.rate, rate.currency)} ${rate.currency}`}
+                </Cell>
+              </Link>
+            ))}
 
             <CurrencySelectModal
               opener={<ButtonCell before={<Icon28AddCircle />}>Add currency</ButtonCell>}
@@ -162,4 +154,4 @@ export const ExchangePage: FC = () => {
       </List>
     </Page>
   );
-};
+}

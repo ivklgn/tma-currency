@@ -1,4 +1,4 @@
-import ReactDOM from 'react-dom/client';
+import { createRoot } from 'react-dom/client';
 import { StrictMode } from 'react';
 import { createCtx, connectLogger } from '@reatom/framework';
 import { reatomContext } from '@reatom/npm-react';
@@ -18,7 +18,7 @@ const ctx = createCtx();
 
 connectLogger(ctx);
 
-const root = ReactDOM.createRoot(document.getElementById('root')!);
+const root = createRoot(document.getElementById('root')!);
 
 try {
   // Configure all application dependencies.
