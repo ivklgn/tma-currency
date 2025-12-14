@@ -64,20 +64,21 @@ export async function fetcher<K extends keyof EndpointsResponse>(
 
   if (!response.ok) {
     const errorData = await response.json();
-    throw APILayerError(
+    const error = APILayerError(
       'BackendInteractionError',
       `Error fetching data from ${endpoint}: ${response.status} ${response.statusText}, Details: ${JSON.stringify(
         errorData
-      )}`,
-      {
-        extendedParams: {
-          endpoint,
-          status: response.status,
-          statusText: response.statusText,
-          errorData,
-        },
-      }
+      )}`
     );
+    error.emit({
+      extendedParams: {
+        endpoint,
+        status: response.status,
+        statusText: response.statusText,
+        errorData,
+      },
+    });
+    throw error;
   }
 
   const data = await response.json();
