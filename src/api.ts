@@ -1,5 +1,5 @@
 import { APILayerError } from './errors';
-import { retrieveLaunchParams } from '@telegram-apps/sdk-react';
+import { retrieveRawInitData } from '@telegram-apps/sdk-react';
 
 // https://apilayer.com/marketplace/exchangerates_data-api#rate-limits
 type EndpointsResponse = {
@@ -42,7 +42,7 @@ export async function fetcher<K extends keyof EndpointsResponse>(
   options?: { signal?: AbortSignal }
 ) {
   const url = getAPIUrl(endpoint);
-  const { initDataRaw } = retrieveLaunchParams();
+  const initDataRaw = retrieveRawInitData();
 
   const queryString = params
     ? '?' +

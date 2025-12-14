@@ -8,8 +8,8 @@ export function EnvUnsupported() {
     let isDark = false;
     try {
       const lp = retrieveLaunchParams();
-      const { bgColor } = lp.themeParams;
-      platform = lp.platform;
+      const bgColor = lp.tgWebAppThemeParams?.bg_color;
+      platform = lp.tgWebAppPlatform;
       isDark = bgColor && isRGB(bgColor) ? isColorDark(bgColor) : false;
     } catch {
       /* empty */

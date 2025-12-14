@@ -4,7 +4,7 @@ import {
   themeParams,
   miniApp,
   initData,
-  $debug,
+  setDebug,
   init as initSDK,
 } from '@telegram-apps/sdk-react';
 import { setBackgroundAsSecondary } from './helpers/set-background';
@@ -14,7 +14,7 @@ import { setBackgroundAsSecondary } from './helpers/set-background';
  */
 export function init(debug: boolean): void {
   // Set @telegram-apps/sdk-react debug mode.
-  $debug.set(debug);
+  setDebug(debug);
 
   // Initialize special event handlers for Telegram Desktop, Android, iOS, etc.
   // Also, configure the package.
@@ -29,9 +29,10 @@ export function init(debug: boolean): void {
   }
 
   // Mount all components used in the project.
+  // In v3, ThemeParams and MiniApp mounting is async - use mountSync for synchronous mounting.
   backButton.mount();
-  miniApp.mount();
-  themeParams.mount();
+  miniApp.mountSync();
+  themeParams.mountSync();
   initData.restore();
   void viewport
     .mount()

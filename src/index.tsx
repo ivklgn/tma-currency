@@ -22,7 +22,7 @@ const root = ReactDOM.createRoot(document.getElementById('root')!);
 
 try {
   // Configure all application dependencies.
-  init(retrieveLaunchParams().startParam === 'debug' || import.meta.env.DEV);
+  init(retrieveLaunchParams().tgWebAppStartParam === 'debug' || import.meta.env.DEV);
 
   root.render(
     <StrictMode>
@@ -31,6 +31,6 @@ try {
       </reatomContext.Provider>
     </StrictMode>
   );
-} catch (e) {
+} catch {
   root.render(<EnvUnsupported />);
 }

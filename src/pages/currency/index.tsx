@@ -15,7 +15,7 @@ import {
   primaryCurrencyAtom,
 } from './model';
 import { Chart } from 'react-google-charts';
-import { classNames, miniApp, useSignal } from '@telegram-apps/sdk-react';
+import { miniApp, useSignal } from '@telegram-apps/sdk-react';
 import { getHistoricalRatesCache, prepareRates, withChartData } from '@/pages/currency/utils';
 
 import './CurrencyPage.css';
@@ -123,7 +123,7 @@ export const CurrencyPage: FC = () => {
               )}
 
               <Chart
-                className={classNames('chart', isLoadingHistoricalRates && 'chart_loading')}
+                className={`chart${isLoadingHistoricalRates ? ' chart_loading' : ''}`}
                 chartType="LineChart"
                 width="100%"
                 height="340px"
