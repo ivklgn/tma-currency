@@ -31,6 +31,7 @@ if (import.meta.env.DEV) {
           }),
         ],
         ["hash", "89d6079ad6762351f38c6dbbc41bb53048019256a9443988af7a48bcad16ba31"],
+        ["signature", "zL-ucjNyREiHDE8aihFwpfR9aggP2xiAo3NSpfe-p7IbCisNlDKlo7Kb6iDpNit0Lp49TLRJB0TIbRBLkUiyAQ"],
         ["auth_date", "1716922846"],
         ["start_param", "debug"],
         ["chat_type", "sender"],
