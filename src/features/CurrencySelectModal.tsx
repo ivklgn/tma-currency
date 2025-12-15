@@ -47,35 +47,37 @@ export function CurrencySelectModal({ opener, onSelect }: CurrencySelectProps) {
         }}
       >
         <Modal.Header>Choose currency</Modal.Header>
-        <List style={{ height: 'calc(100vh - 300px)' }}>
-        <Input
-          header="Currencies"
-          placeholder="Search currency"
-          onChange={handleChangeSearch}
-          value={search}
-        />
-        {filteredCurrencies.map(([code, name]) => (
-          <Section key={code}>
-            <Cell
-              before={
-                <ReactCountryFlag
-                  countryCode={currencyCountryCodes[code]}
-                  style={{
-                    fontSize: '2em',
-                    lineHeight: '2em',
-                  }}
-                />
-              }
-              subtitle={name}
-              onClick={() => {
-                onSelect?.(code);
-                setOpen(false);
-              }}
-            >
-              {code}
-            </Cell>
-          </Section>
-        ))}
+        <div style={{ padding: '0 16px' }}>
+          <Input
+            header="Currencies"
+            placeholder="Search currency"
+            onChange={handleChangeSearch}
+            value={search}
+          />
+        </div>
+        <List style={{ height: 'calc(100vh - 400px)', overflow: 'auto' }}>
+          {filteredCurrencies.map(([code, name]) => (
+            <Section key={code}>
+              <Cell
+                before={
+                  <ReactCountryFlag
+                    countryCode={currencyCountryCodes[code]}
+                    style={{
+                      fontSize: '2em',
+                      lineHeight: '2em',
+                    }}
+                  />
+                }
+                subtitle={name}
+                onClick={() => {
+                  onSelect?.(code);
+                  setOpen(false);
+                }}
+              >
+                {code}
+              </Cell>
+            </Section>
+          ))}
         </List>
       </Modal>
     </>
