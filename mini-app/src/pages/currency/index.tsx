@@ -4,6 +4,7 @@ import { Page } from '@/components/Page.tsx';
 import ReactCountryFlag from 'react-country-flag';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { reatomComponent } from '@reatom/react';
+import { wrap } from '@reatom/core';
 import { targetCurrenciesAtom } from '../exchange/model';
 import { currencyCountryCodes } from '../exchange/country-codes';
 import { formatMoney } from '../../helpers/money';
@@ -97,28 +98,28 @@ export const CurrencyPage = reatomComponent(() => {
             <Chip
               disabled={isLoadingHistoricalRates}
               mode={historicalFilter === '3d' ? 'mono' : 'outline'}
-              onClick={() => onChangeHistoricalFilterAction('3d')}
+              onClick={wrap(() => onChangeHistoricalFilterAction('3d'))}
             >
               3d
             </Chip>
             <Chip
               disabled={isLoadingHistoricalRates}
               mode={historicalFilter === '1w' ? 'mono' : 'outline'}
-              onClick={() => onChangeHistoricalFilterAction('1w')}
+              onClick={wrap(() => onChangeHistoricalFilterAction('1w'))}
             >
               1w
             </Chip>
             <Chip
               disabled={isLoadingHistoricalRates}
               mode={historicalFilter === '1m' ? 'mono' : 'outline'}
-              onClick={() => onChangeHistoricalFilterAction('1m')}
+              onClick={wrap(() => onChangeHistoricalFilterAction('1m'))}
             >
               1m
             </Chip>
             <Chip
               disabled={isLoadingHistoricalRates}
               mode={historicalFilter === '1y' ? 'mono' : 'outline'}
-              onClick={() => onChangeHistoricalFilterAction('1y')}
+              onClick={wrap(() => onChangeHistoricalFilterAction('1y'))}
             >
               1y
             </Chip>

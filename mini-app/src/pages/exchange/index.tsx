@@ -14,6 +14,7 @@ import ReactCountryFlag from 'react-country-flag';
 import { Link } from '@/components/Link/Link.tsx';
 import { Page } from '@/components/Page.tsx';
 import { reatomComponent } from '@reatom/react';
+import { wrap } from '@reatom/core';
 import {
   amountAtom,
   targetCurrenciesAtom,
@@ -48,7 +49,7 @@ export const ExchangePage = reatomComponent(() => {
             defaultValue={1}
             type="number"
             min={1}
-            onChange={onChangeAmountAction}
+            onChange={wrap(onChangeAmountAction)}
             value={amount}
             after={
               <Tappable
@@ -57,7 +58,7 @@ export const ExchangePage = reatomComponent(() => {
                   display: 'flex',
                 }}
               >
-                <Icon24Close onClick={onResetAmountAction} />
+                <Icon24Close onClick={wrap(onResetAmountAction)} />
               </Tappable>
             }
           />
@@ -121,10 +122,10 @@ export const ExchangePage = reatomComponent(() => {
                       style={{
                         display: 'flex',
                       }}
-                      onClick={(e) => {
+                      onClick={wrap((e) => {
                         e.preventDefault();
                         onDeleteTargetCurrencyAction(rate.currency);
-                      }}
+                      })}
                     >
                       <Icon24Close />
                     </Tappable>

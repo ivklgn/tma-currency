@@ -2,7 +2,7 @@ import { type ChangeEvent, type ReactNode, cloneElement, isValidElement, useStat
 import { List, Input, Section, Cell, Modal } from '@telegram-apps/telegram-ui';
 import ReactCountryFlag from 'react-country-flag';
 import { currencies } from '../pages/exchange/currencies';
-import { atom, action, computed } from '@reatom/core';
+import { atom, action, computed, wrap } from '@reatom/core';
 import { reatomComponent } from '@reatom/react';
 import { currencyCountryCodes } from '../pages/exchange/country-codes';
 
@@ -45,12 +45,12 @@ export const CurrencySelectModal = reatomComponent<CurrencySelectProps>(({ opene
       {_opener}
       <Modal
         open={isOpen}
-        onOpenChange={(value) => {
+        onOpenChange={wrap((value) => {
           if (!value) {
             setOpen(false);
             onClearSearch();
           }
-        }}
+        })}
       >
         <Modal.Header>Choose currency</Modal.Header>
         <div style={{ padding: '0 16px' }}>
@@ -75,11 +75,11 @@ export const CurrencySelectModal = reatomComponent<CurrencySelectProps>(({ opene
                   />
                 }
                 subtitle={name}
-                onClick={() => {
+                onClick={wrap(() => {
                   onSelect?.(code);
                   setOpen(false);
                   onClearSearch();
-                }}
+                })}
               >
                 {code}
               </Cell>
