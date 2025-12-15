@@ -7,6 +7,7 @@
     "dev:server": "pnpm --filter @tma-exchange-rate/server dev",
     "build": "pnpm --filter @tma-exchange-rate/mini-app build",
     "lint": "pnpm -r lint",
+    "types": "pnpm --filter @tma-exchange-rate/mini-app types",
     "lint:fix": "pnpm -r lint:fix",
     "format": "pnpm -r format"
   },

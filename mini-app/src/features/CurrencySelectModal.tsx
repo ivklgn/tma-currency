@@ -1,35 +1,40 @@
-import { type ChangeEvent, type ReactNode, cloneElement, isValidElement } from 'react';
+import { type ChangeEvent, type ReactNode, cloneElement, isValidElement, useState } from 'react';
 import { List, Input, Section, Cell, Modal } from '@telegram-apps/telegram-ui';
 import ReactCountryFlag from 'react-country-flag';
 import { currencies } from '../pages/exchange/currencies';
-import { action, atom } from '@reatom/framework';
-import { useAction, useAtom } from '@reatom/npm-react';
+import { atom, action, computed } from '@reatom/core';
+import { reatomComponent } from '@reatom/react';
 import { currencyCountryCodes } from '../pages/exchange/country-codes';
 
 const searchCurrenciesAtom = atom('', 'searchCurrenciesAtom');
-const filteredCurrenciesAtom = atom(
-  (ctx) =>
+
+const onChangeSearch = action((event: ChangeEvent<HTMLInputElement>) => {
+  searchCurrenciesAtom.set(event.currentTarget.value);
+}, 'onChangeSearch');
+
+const onClearSearch = action(() => {
+  searchCurrenciesAtom.set('');
+}, 'onClearSearch');
+
+const filteredCurrenciesAtom = computed(
+  () =>
     Object.entries(currencies).filter(
       ([code, name]) =>
-        code.toLocaleLowerCase().includes(ctx.spy(searchCurrenciesAtom).toLocaleLowerCase()) ||
-        name.toLocaleLowerCase().includes(ctx.spy(searchCurrenciesAtom).toLocaleLowerCase())
+        code.toLocaleLowerCase().includes(searchCurrenciesAtom().toLocaleLowerCase()) ||
+        name.toLocaleLowerCase().includes(searchCurrenciesAtom().toLocaleLowerCase())
     ),
   'filteredCurrenciesAtom'
 );
-const onChangeSearch = action((ctx, event: ChangeEvent<HTMLInputElement>) => {
-  searchCurrenciesAtom(ctx, event.currentTarget.value);
-}, 'onChangeSearch');
 
 interface CurrencySelectProps {
   opener: ReactNode;
   onSelect?: (currencyCode: string) => void;
 }
 
-export function CurrencySelectModal({ opener, onSelect }: CurrencySelectProps) {
-  const [isOpen, setOpen] = useAtom(false);
-  const [search] = useAtom(searchCurrenciesAtom);
-  const [filteredCurrencies] = useAtom(filteredCurrenciesAtom);
-  const handleChangeSearch = useAction(onChangeSearch);
+export const CurrencySelectModal = reatomComponent<CurrencySelectProps>(({ opener, onSelect }) => {
+  const [isOpen, setOpen] = useState(false);
+  const search = searchCurrenciesAtom();
+  const filteredCurrencies = filteredCurrenciesAtom();
 
   const _opener = isValidElement<{ onClick?: () => void }>(opener)
     ? cloneElement(opener, { onClick: () => setOpen(true) })
@@ -43,6 +48,7 @@ export function CurrencySelectModal({ opener, onSelect }: CurrencySelectProps) {
         onOpenChange={(value) => {
           if (!value) {
             setOpen(false);
+            onClearSearch();
           }
         }}
       >
@@ -51,7 +57,7 @@ export function CurrencySelectModal({ opener, onSelect }: CurrencySelectProps) {
           <Input
             header="Currencies"
             placeholder="Search currency"
-            onChange={handleChangeSearch}
+            onChange={onChangeSearch}
             value={search}
           />
         </div>
@@ -72,6 +78,7 @@ export function CurrencySelectModal({ opener, onSelect }: CurrencySelectProps) {
                 onClick={() => {
                   onSelect?.(code);
                   setOpen(false);
+                  onClearSearch();
                 }}
               >
                 {code}
@@ -82,4 +89,4 @@ export function CurrencySelectModal({ opener, onSelect }: CurrencySelectProps) {
       </Modal>
     </>
   );
-}
+}, 'CurrencySelectModal');

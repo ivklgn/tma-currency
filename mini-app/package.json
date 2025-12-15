@@ -7,6 +7,7 @@
     "deploy": "gh-pages -d dist",
     "dev": "vite",
     "build": "tsc --noEmit && vite build",
+    "types": "tsc --noEmit",
     "lint": "eslint src --report-unused-disable-directives --max-warnings 0",
     "lint:fix": "eslint src --report-unused-disable-directives --max-warnings 0 --fix",
     "format": "prettier --write src",
@@ -14,10 +15,8 @@
     "predeploy": "pnpm run build"
   },
   "dependencies": {
-    "@reatom/framework": "^3.4.68",
-    "@reatom/npm-react": "^3.10.6",
-    "@reatom/persist-web-storage": "^3.4.6",
-    "@reatom/url": "^3.9.0",
+    "@reatom/core": "1000.*.*",
+    "@reatom/react": "1000.*.*",
     "@telegram-apps/sdk-react": "^3.3.9",
     "@telegram-apps/telegram-ui": "^2.1.13",
     "conway-errors": "^3.2.1",

@@ -1,47 +1,58 @@
 import {
   action,
   atom,
-  batch,
-  onConnect,
-  reatomAsync,
+  computed,
   sleep,
-  withAbort,
-  withDataAtom,
-  withErrorAtom,
-} from '@reatom/framework';
-import { withLocalStorage } from '@reatom/persist-web-storage';
+  withAsyncData,
+  withLocalStorage,
+  withConnectHook,
+  wrap,
+} from '@reatom/core';
 import { fetcher } from '../../api';
-import { withProgress } from '@/helpers/progress';
+import { isProgressVisibleAtom } from '@/features/ProgressBar/model';
 
 interface ITargetCurrency {
   currency: string;
   rate: number;
 }
 
-export const amountAtom = atom(1, 'amountAtom').pipe(withLocalStorage('amount'));
-export const primaryCurrencyAtom = atom('USD', 'primaryCurrencyAtom').pipe(
+export const amountAtom = atom(1, 'amountAtom').extend(withLocalStorage('amount'));
+
+export const primaryCurrencyAtom = atom('USD', 'primaryCurrencyAtom').extend(
   withLocalStorage('primaryCurrency')
 );
-export const targetCurrencyIdsAtom = atom<string[]>([], 'targetCurrencyIds');
-export const targetCurrenciesAtom = atom<ITargetCurrency[]>([], 'targetCurrencies').pipe(
-  withLocalStorage('targetCurrencies')
-);
-export const onChangeAmountAction = action(
-  (ctx, event: React.ChangeEvent<HTMLInputElement>) =>
-    amountAtom(ctx, parseInt(event.currentTarget.value)),
-  'onChangeAmountAction'
+
+export const targetCurrencyIdsAtom = atom<string[]>([], 'targetCurrencyIdsAtom');
+
+export const targetCurrenciesAtom = atom<ITargetCurrency[]>([], 'targetCurrenciesAtom').extend(
+  withLocalStorage('targetCurrencies'),
+  withConnectHook(() => {
+    const targetCurrencies = targetCurrenciesAtom();
+
+    if (!targetCurrencies.length) {
+      return;
+    }
+
+    targetCurrencyIdsAtom.set(targetCurrencies.map((q) => q.currency));
+    getNewExchangeRates();
+  })
 );
 
-export const onResetAmountAction = action((ctx) => amountAtom(ctx, 1), 'onResetAmountAction');
+export const onChangeAmountAction = action((event: React.ChangeEvent<HTMLInputElement>) => {
+  amountAtom.set(parseInt(event.currentTarget.value) || 1);
+}, 'onChangeAmountAction');
 
-export const onChangePrimaryCurrencyAction = action(
-  (ctx, currency: string) => primaryCurrencyAtom(ctx, currency),
-  'onChangePrimaryCurrencyAction'
-);
+export const onResetAmountAction = action(() => {
+  amountAtom.set(1);
+}, 'onResetAmountAction');
 
-export const getNewExchangeRates = action((ctx) => {
-  const primaryCurrency = ctx.get(primaryCurrencyAtom);
-  const targetCurrencyIds = ctx.get(targetCurrencyIdsAtom);
+export const onChangePrimaryCurrencyAction = action((currency: string) => {
+  primaryCurrencyAtom.set(currency);
+}, 'onChangePrimaryCurrencyAction');
+
+export const getNewExchangeRates = action(() => {
+  const primaryCurrency = primaryCurrencyAtom();
+  const targetCurrencyIds = targetCurrencyIdsAtom();
 
   if (
     targetCurrencyIds.length === 0 ||
@@ -50,71 +61,54 @@ export const getNewExchangeRates = action((ctx) => {
     return;
   }
 
-  fetchExchangeRates(ctx, primaryCurrency, targetCurrencyIds);
-});
+  fetchExchangeRates(primaryCurrency, targetCurrencyIds);
+}, 'getNewExchangeRates');
 
-export const onChangeTargetCurrencyAction = action((ctx, currency: string) => {
-  const targetCurrencyIds = ctx.get(targetCurrencyIdsAtom);
+export const onChangeTargetCurrencyAction = action((currency: string) => {
+  const targetCurrencyIds = targetCurrencyIdsAtom();
 
   if (!targetCurrencyIds.includes(currency)) {
-    const newCurrencies = [...targetCurrencyIds, currency];
-
-    targetCurrencyIdsAtom(ctx, newCurrencies);
-    getNewExchangeRates(ctx);
+    targetCurrencyIdsAtom.set([...targetCurrencyIds, currency]);
+    getNewExchangeRates();
   }
-}, 'onChangePrimaryCurrencyAction');
+}, 'onChangeTargetCurrencyAction');
 
-export const onDeleteTargetCurrencyAction = action((ctx, currency: string) => {
-  const targetCurrencyIds = ctx.get(targetCurrencyIdsAtom);
-  const targetCurrencies = ctx.get(targetCurrenciesAtom);
+export const onDeleteTargetCurrencyAction = action((currency: string) => {
+  const targetCurrencyIds = targetCurrencyIdsAtom();
+  const targetCurrencies = targetCurrenciesAtom();
 
   if (targetCurrencyIds.includes(currency)) {
-    const newCurrencies = targetCurrencyIds.filter((c) => c !== currency);
-
-    batch(ctx, () => {
-      targetCurrencyIdsAtom(ctx, newCurrencies);
-      targetCurrenciesAtom(
-        ctx,
-        targetCurrencies.filter((c) => c.currency !== currency)
-      );
-    });
+    targetCurrencyIdsAtom.set(targetCurrencyIds.filter((c) => c !== currency));
+    targetCurrenciesAtom.set(targetCurrencies.filter((c) => c.currency !== currency));
   }
 }, 'onDeleteTargetCurrencyAction');
 
-export const fetchExchangeRates = reatomAsync(
-  async (ctx, primaryCurrency: string, targetCurrencies: string[]) => {
-    await ctx.schedule(() => sleep(400));
+export const fetchExchangeRates = action(
+  async (primaryCurrency: string, targetCurrencies: string[]) => {
+    isProgressVisibleAtom.set(true);
 
-    const { signal } = ctx.controller;
-    const { rates } = await fetcher<'/live'>(
-      '/live',
-      { source: primaryCurrency, currencies: targetCurrencies },
-      { signal: signal }
-    );
+    try {
+      await wrap(sleep(400));
 
-    return Object.entries(rates).map(([currency, rate]) => ({
-      currency,
-      rate: rate > 0 ? rate : 1,
-    }));
+      const { rates } = await wrap(
+        fetcher<'/live'>('/live', { source: primaryCurrency, currencies: targetCurrencies })
+      );
+
+      const result = Object.entries(rates).map(([currency, rate]) => ({
+        currency,
+        rate: rate > 0 ? rate : 1,
+      }));
+
+      targetCurrenciesAtom.set(result);
+      return result;
+    } finally {
+      isProgressVisibleAtom.set(false);
+    }
   },
   'fetchExchangeRates'
-).pipe(withDataAtom([]), withErrorAtom(), withAbort(), withProgress());
+).extend(withAsyncData({ initState: [] as ITargetCurrency[] }));
 
-fetchExchangeRates.onFulfill.onCall((ctx, payload) => {
-  targetCurrenciesAtom(ctx, payload);
-});
-
-onConnect(targetCurrenciesAtom, (ctx) => {
-  const targetCurrencies = ctx.get(targetCurrenciesAtom);
-
-  if (!targetCurrencies.length) {
-    return;
-  }
-
-  targetCurrencyIdsAtom(
-    ctx,
-    targetCurrencies.map((q) => q.currency)
-  );
-
-  return getNewExchangeRates(ctx);
-});
+export const exchangeRatesErrorAtom = computed(
+  () => fetchExchangeRates.error(),
+  'exchangeRatesErrorAtom'
+);

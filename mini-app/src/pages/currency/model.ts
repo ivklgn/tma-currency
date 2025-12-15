@@ -1,18 +1,9 @@
-import {
-  action,
-  atom,
-  reatomResource,
-  sleep,
-  withCache,
-  withDataAtom,
-  withErrorAtom,
-} from '@reatom/framework';
-import { withLocalStorage } from '@reatom/persist-web-storage';
+import { action, atom, computed, sleep, withAsyncData, withLocalStorage, wrap } from '@reatom/core';
 import { fetcher } from '../../api';
-import { searchParamsAtom } from '@reatom/url';
 import { formatDate } from '../../helpers/date';
 import { setLocalStorageValue } from '@/helpers/localStorage.ts';
 import { prepareRates } from '@/pages/currency/utils.ts';
+import { isProgressVisibleAtom } from '@/features/ProgressBar/model';
 
 type HistoricalFilter = '3d' | '1w' | '1m' | '1y';
 
@@ -22,15 +13,22 @@ export interface IHistoricalRate {
 }
 
 export const historicalFilterAtom = atom<HistoricalFilter>('3d', 'historicalFilterAtom');
-export const primaryCurrencyAtom = atom('USD', 'primaryCurrencyAtom').pipe(
+
+export const primaryCurrencyAtom = atom('USD', 'primaryCurrencyAtom').extend(
   withLocalStorage('primaryCurrency')
 );
-export const currentCurrencyAtom = searchParamsAtom.lens('currency', { path: '/exchange-rate' });
+
+export const currentCurrencyAtom = atom('', 'currentCurrencyAtom');
 
 export const onChangeHistoricalFilterAction = action(
-  (ctx, filter: HistoricalFilter) => historicalFilterAtom(ctx, filter),
+  (filter: HistoricalFilter) => historicalFilterAtom.set(filter),
   'onChangeHistoricalFilterAction'
 );
+
+export const setCurrentCurrencyFromUrl = action((searchParams: URLSearchParams) => {
+  const currency = searchParams.get('currency') || '';
+  currentCurrencyAtom.set(currency);
+}, 'setCurrentCurrencyFromUrl');
 
 function convertFilterToEndDate(historicalFilter: HistoricalFilter) {
   const date = new Date();
@@ -41,7 +39,7 @@ function convertFilterToEndDate(historicalFilter: HistoricalFilter) {
   }
 
   if (historicalFilter === '1m') {
-    date.setDate(date.getMonth() - 1);
+    date.setMonth(date.getMonth() - 1);
     return date;
   }
 
@@ -54,40 +52,56 @@ function convertFilterToEndDate(historicalFilter: HistoricalFilter) {
   return date;
 }
 
-export const historicalRatesAtom = reatomResource<IHistoricalRate[]>(async (ctx) => {
-  const primaryCurrency = ctx.spy(primaryCurrencyAtom);
-  const currentCurrency = ctx.spy(currentCurrencyAtom);
-  const historicalFilter = ctx.spy(historicalFilterAtom);
+export const fetchHistoricalRates = action(async () => {
+  const primaryCurrency = primaryCurrencyAtom();
+  const currentCurrency = currentCurrencyAtom();
+  const historicalFilter = historicalFilterAtom();
 
-  await ctx.schedule(() => sleep(400));
+  if (!currentCurrency || !primaryCurrency) {
+    return [];
+  }
 
-  const startDate = convertFilterToEndDate(historicalFilter);
+  isProgressVisibleAtom.set(true);
 
-  const { signal } = ctx.controller;
-  const { rates } = await fetcher(
-    '/timeframe',
-    {
-      currencies: [currentCurrency],
-      start_date: formatDate(startDate),
-      end_date: formatDate(new Date()),
-      source: primaryCurrency,
-    },
-    { signal }
-  );
+  try {
+    await wrap(sleep(400));
 
-  return Object.entries(rates).map(([date, rate]) => {
-    return { date, rate: rate[currentCurrency] };
-  });
-}, 'historicalRatesAtom').pipe(
-  withDataAtom([]),
-  withCache({ length: 10, swr: false }),
-  withErrorAtom()
+    const startDate = convertFilterToEndDate(historicalFilter);
+
+    const { rates } = await wrap(
+      fetcher('/timeframe', {
+        currencies: [currentCurrency],
+        start_date: formatDate(startDate),
+        end_date: formatDate(new Date()),
+        source: primaryCurrency,
+      })
+    );
+
+    const result = Object.entries(rates).map(([date, rate]) => {
+      return { date, rate: rate[currentCurrency] };
+    });
+
+    if (historicalFilter === '3d') {
+      setLocalStorageValue('historicalRatesCache', prepareRates(result));
+    }
+
+    return result;
+  } finally {
+    isProgressVisibleAtom.set(false);
+  }
+}, 'fetchHistoricalRates').extend(withAsyncData({ initState: [] as IHistoricalRate[] }));
+
+export const historicalRatesAtom = computed(
+  () => fetchHistoricalRates.data(),
+  'historicalRatesAtom'
 );
 
-historicalRatesAtom.onFulfill.onCall((ctx, data) => {
-  const activeFilter = ctx.get(historicalFilterAtom);
+export const isLoadingHistoricalRatesAtom = computed(
+  () => fetchHistoricalRates.pending() > 0,
+  'isLoadingHistoricalRatesAtom'
+);
 
-  if (activeFilter === '3d') {
-    setLocalStorageValue('historicalRatesCache', prepareRates(data));
-  }
-});
+export const historicalRatesErrorAtom = computed(
+  () => fetchHistoricalRates.error(),
+  'historicalRatesErrorAtom'
+);

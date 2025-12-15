@@ -2,8 +2,8 @@ import { Section, Cell, List, Chip, Placeholder, Spinner } from '@telegram-apps/
 import { useEffect, useMemo } from 'react';
 import { Page } from '@/components/Page.tsx';
 import ReactCountryFlag from 'react-country-flag';
-import { useNavigate } from 'react-router-dom';
-import { useAction, useAtom } from '@reatom/npm-react';
+import { useNavigate, useSearchParams } from 'react-router-dom';
+import { reatomComponent } from '@reatom/react';
 import { targetCurrenciesAtom } from '../exchange/model';
 import { currencyCountryCodes } from '../exchange/country-codes';
 import { formatMoney } from '../../helpers/money';
@@ -11,8 +11,12 @@ import {
   currentCurrencyAtom,
   historicalFilterAtom,
   historicalRatesAtom,
-  onChangeHistoricalFilterAction,
+  isLoadingHistoricalRatesAtom,
+  historicalRatesErrorAtom,
   primaryCurrencyAtom,
+  onChangeHistoricalFilterAction,
+  setCurrentCurrencyFromUrl,
+  fetchHistoricalRates,
 } from './model';
 import { Chart } from 'react-google-charts';
 import { miniApp, useSignal } from '@telegram-apps/sdk-react';
@@ -20,21 +24,29 @@ import { getHistoricalRatesCache, prepareRates, withChartData } from '@/pages/cu
 
 import './CurrencyPage.css';
 
-export function CurrencyPage() {
+export const CurrencyPage = reatomComponent(() => {
   const navigate = useNavigate();
-  const [historicalFilter] = useAtom(historicalFilterAtom);
-  const [primaryCurrency] = useAtom(primaryCurrencyAtom);
-  const [currentCurrency] = useAtom(currentCurrencyAtom);
-  const [currentRate] = useAtom(
-    (ctx) => ctx.spy(targetCurrenciesAtom).filter((r) => r.currency === currentCurrency)?.[0],
-    [currentCurrency]
-  );
+  const [searchParams] = useSearchParams();
+  const historicalFilter = historicalFilterAtom();
+  const primaryCurrency = primaryCurrencyAtom();
+  const currentCurrency = currentCurrencyAtom();
+  const targetCurrencies = targetCurrenciesAtom();
+  const currentRate = targetCurrencies.find((r) => r.currency === currentCurrency);
 
-  const handleChangeHistoricalFilterAction = useAction(onChangeHistoricalFilterAction);
-  const [historicalRates] = useAtom(historicalRatesAtom.dataAtom);
-  const [isLoadingHistoricalRates] = useAtom((ctx) => ctx.spy(historicalRatesAtom.pendingAtom) > 0);
-  const [historicalRatesError] = useAtom(historicalRatesAtom.errorAtom);
+  const historicalRates = historicalRatesAtom();
+  const isLoadingHistoricalRates = isLoadingHistoricalRatesAtom();
+  const historicalRatesError = historicalRatesErrorAtom();
   const isDark = useSignal(miniApp.isDark);
+
+  useEffect(() => {
+    setCurrentCurrencyFromUrl(searchParams);
+  }, [searchParams]);
+
+  useEffect(() => {
+    if (currentCurrency && primaryCurrency) {
+      fetchHistoricalRates();
+    }
+  }, [currentCurrency, primaryCurrency, historicalFilter]);
 
   const historicalData = useMemo(() => {
     if (historicalRates.length) {
@@ -85,28 +97,28 @@ export function CurrencyPage() {
             <Chip
               disabled={isLoadingHistoricalRates}
               mode={historicalFilter === '3d' ? 'mono' : 'outline'}
-              onClick={() => handleChangeHistoricalFilterAction('3d')}
+              onClick={() => onChangeHistoricalFilterAction('3d')}
             >
               3d
             </Chip>
             <Chip
               disabled={isLoadingHistoricalRates}
               mode={historicalFilter === '1w' ? 'mono' : 'outline'}
-              onClick={() => handleChangeHistoricalFilterAction('1w')}
+              onClick={() => onChangeHistoricalFilterAction('1w')}
             >
               1w
             </Chip>
             <Chip
               disabled={isLoadingHistoricalRates}
               mode={historicalFilter === '1m' ? 'mono' : 'outline'}
-              onClick={() => handleChangeHistoricalFilterAction('1m')}
+              onClick={() => onChangeHistoricalFilterAction('1m')}
             >
               1m
             </Chip>
             <Chip
               disabled={isLoadingHistoricalRates}
               mode={historicalFilter === '1y' ? 'mono' : 'outline'}
-              onClick={() => handleChangeHistoricalFilterAction('1y')}
+              onClick={() => onChangeHistoricalFilterAction('1y')}
             >
               1y
             </Chip>
@@ -165,4 +177,4 @@ export function CurrencyPage() {
       </List>
     </Page>
   );
-}
+}, 'CurrencyPage');

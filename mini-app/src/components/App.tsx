@@ -1,7 +1,6 @@
 import { useLaunchParams, miniApp, useSignal } from '@telegram-apps/sdk-react';
 import { AppRoot } from '@telegram-apps/telegram-ui';
 import { Navigate, Route, Routes, HashRouter } from 'react-router-dom';
-import { RouterSync } from './RouterSync';
 
 import { routes } from '@/routes';
 import { BaseLayout } from '@/layouts/BaseLayout.tsx';
@@ -16,7 +15,6 @@ export function App() {
       platform={['macos', 'ios'].includes(lp.tgWebAppPlatform) ? 'ios' : 'base'}
     >
       <HashRouter>
-        <RouterSync />
         <Routes>
           <Route path="/" element={<BaseLayout />}>
             {routes.map((route) => (

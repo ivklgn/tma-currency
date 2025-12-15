@@ -1,7 +1,7 @@
 import { createRoot } from 'react-dom/client';
 import { StrictMode } from 'react';
-import { createCtx, connectLogger } from '@reatom/framework';
-import { reatomContext } from '@reatom/npm-react';
+import { clearStack, context, connectLogger } from '@reatom/core';
+import { reatomContext } from '@reatom/react';
 import { retrieveLaunchParams } from '@telegram-apps/sdk-react';
 import { Root } from '@/components/Root.tsx';
 import { EnvUnsupported } from '@/components/EnvUnsupported.tsx';
@@ -14,9 +14,14 @@ import './index.css';
 // Mock the environment in case, we are outside Telegram.
 import './mockEnv.ts';
 
-const ctx = createCtx();
+// Disable default context for predictability
+clearStack();
 
-connectLogger(ctx);
+const rootFrame = context.start();
+
+if (import.meta.env.DEV) {
+  rootFrame.run(connectLogger);
+}
 
 const root = createRoot(document.getElementById('root')!);
 
@@ -26,7 +31,7 @@ try {
 
   root.render(
     <StrictMode>
-      <reatomContext.Provider value={ctx}>
+      <reatomContext.Provider value={rootFrame}>
         <Root />
       </reatomContext.Provider>
     </StrictMode>

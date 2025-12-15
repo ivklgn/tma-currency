@@ -1,27 +1,25 @@
-import { AsyncAction, Ctx } from '@reatom/framework';
+import { Action, effect } from '@reatom/core';
 import { isProgressVisibleAtom } from '@/features/ProgressBar/model';
 
+type AsyncActionWithPending = Action & {
+  pending: () => number;
+};
+
 export const withProgress =
-  <T extends AsyncAction>() =>
+  <T extends AsyncActionWithPending>() =>
   (anAsync: T): T => {
-    anAsync.onCall((ctx) => {
-      const isVisible = ctx.get(isProgressVisibleAtom);
+    effect(
+      () => {
+        const pending = anAsync.pending();
 
-      if (!isVisible) {
-        isProgressVisibleAtom(ctx, true);
-      }
-    });
-
-    const onFulfillHandler = (ctx: Ctx) => {
-      const isVisible = ctx.get(isProgressVisibleAtom);
-
-      if (isVisible) {
-        isProgressVisibleAtom(ctx, false);
-      }
-    };
-
-    anAsync.onFulfill.onCall(onFulfillHandler);
-    anAsync.onReject.onCall(onFulfillHandler);
+        if (pending > 0) {
+          isProgressVisibleAtom.set(true);
+        } else {
+          isProgressVisibleAtom.set(false);
+        }
+      },
+      `${anAsync.name || 'async'}.progressEffect`
+    );
 
     return anAsync;
   };
