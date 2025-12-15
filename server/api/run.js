@@ -1,10 +1,10 @@
-import { app } from "./app.js";
+import { app } from './app.js';
 
-const port = normalizePort(process.env.PORT || "8080");
+const port = normalizePort(process.env.PORT || '8080');
 
 (async () => {
   try {
-    await app.listen({ port, host: "0.0.0.0" });
+    await app.listen({ port, host: '0.0.0.0' });
     onListening();
   } catch (err) {
     app.log.error(err);
@@ -12,12 +12,12 @@ const port = normalizePort(process.env.PORT || "8080");
   }
 })();
 
-app.addHook("onError", async (request, reply, error) => {
+app.addHook('onError', async (request, reply, error) => {
   onError(error);
 });
 
-app.addHook("onReady", async () => {
-  console.log("app is ready");
+app.addHook('onReady', async () => {
+  console.log('app is ready');
 });
 
 function normalizePort(val) {
@@ -35,20 +35,20 @@ function normalizePort(val) {
 }
 
 function onError(error) {
-  const bind = typeof port === "string" ? "Pipe " + port : "Port " + port;
+  const bind = typeof port === 'string' ? 'Pipe ' + port : 'Port ' + port;
 
   // Handle specific listen errors with friendly messages
   switch (error.code) {
-    case "EACCES":
-      console.error(bind + " requires elevated privileges");
+    case 'EACCES':
+      console.error(bind + ' requires elevated privileges');
       process.exit(1);
       break;
-    case "EADDRINUSE":
-      console.error(bind + " is already in use");
+    case 'EADDRINUSE':
+      console.error(bind + ' is already in use');
       process.exit(1);
       break;
     default:
-      console.error("Unexpected error: ", error);
+      console.error('Unexpected error: ', error);
       process.exit(1);
   }
 }

@@ -120,32 +120,32 @@ importers:
   server:
     dependencies:
       '@fastify/autoload':
-        specifier: ^6.1.0
+        specifier: ^6.3.1
         version: 6.3.1
       '@fastify/cors':
-        specifier: ^10.0.2
-        version: 10.1.0
+        specifier: ^11.2.0
+        version: 11.2.0
       '@telegram-apps/init-data-node':
-        specifier: ^1.2.2
-        version: 1.2.2
+        specifier: ^2.0.10
+        version: 2.0.10(typescript@4.9.5)
       fastify:
-        specifier: ^5.3.2
+        specifier: ^5.6.2
         version: 5.6.2
     devDependencies:
       '@vercel/node':
-        specifier: ^5.1.0
+        specifier: ^5.5.15
         version: 5.5.15(@swc/core@1.15.4(@swc/helpers@0.5.17))(rollup@4.53.3)
       eslint:
-        specifier: ^9.18.0
+        specifier: ^9.39.2
         version: 9.39.2
       eslint-config-prettier:
-        specifier: ^9.1.0
-        version: 9.1.2(eslint@9.39.2)
+        specifier: ^10.1.8
+        version: 10.1.8(eslint@9.39.2)
       eslint-plugin-prettier:
-        specifier: ^5.2.1
-        version: 5.5.4(eslint-config-prettier@9.1.2(eslint@9.39.2))(eslint@9.39.2)(prettier@3.7.4)
+        specifier: ^5.5.4
+        version: 5.5.4(eslint-config-prettier@10.1.8(eslint@9.39.2))(eslint@9.39.2)(prettier@3.7.4)
       prettier:
-        specifier: ^3.4.2
+        specifier: ^3.7.4
         version: 3.7.4
 
 packages:
@@ -378,8 +378,8 @@ packages:
     resolution: {integrity: sha512-vBZP4NlzfOlerQTnba4aqZoMhE/a9HY7HRqoOPaETQcSQuWEIyZMHGfVu6w9wGtGK5fED5qRs2DteVCjOH60sA==}
     engines: {node: '>=14'}
 
-  '@fastify/cors@10.1.0':
-    resolution: {integrity: sha512-MZyBCBJtII60CU9Xme/iE4aEy8G7QpzGR8zkdXZkDFt7ElEMachbE61tfhAG/bvSaULlqlf0huMT12T7iqEmdQ==}
+  '@fastify/cors@11.2.0':
+    resolution: {integrity: sha512-LbLHBuSAdGdSFZYTLVA3+Ch2t+sA6nq3Ejc6XLAKiQ6ViS2qFnvicpj0htsx03FyYeLs04HfRNBsz/a8SvbcUw==}
 
   '@fastify/error@4.2.0':
     resolution: {integrity: sha512-RSo3sVDXfHskiBZKBPRgnQTtIqpi/7zhJOEmAxCiBcM7d0uwdGdxLlsCaLzGs8v8NnxIRlfG0N51p5yFaOentQ==}
@@ -892,8 +892,8 @@ packages:
     resolution: {integrity: sha512-kBZjWRRp/lxKeQ8r8cDWUY9EjxUtyeh/9xTQjsjuGRsCR5XTO1cyVbvcvqzHn53csGx3aBs+fOR3Pk3b6w2JHg==}
     deprecated: This package is not supported anymore. Use @tma.js/bridge instead
 
-  '@telegram-apps/init-data-node@1.2.2':
-    resolution: {integrity: sha512-/nazt+7Xa+/niezRMnGMILy280SH/XqdwuGLIc/aAfblzR3j98Ze9DUdheOOPozjYKPujEEANjRG4bCtkOvoAA==}
+  '@telegram-apps/init-data-node@2.0.10':
+    resolution: {integrity: sha512-hyJ0Qbc1Rqmog4OMS1neZo0PTBKDpOrXzy4EtEyXu8nAA8IK2iYJXnt3wRcvbYn6Qnkyh0wPEkIJmY8Hj3awPw==}
     deprecated: This package is not supported anymore. Use @tma.js/init-data-node instead
 
   '@telegram-apps/navigation@1.0.14':
@@ -921,23 +921,12 @@ packages:
       react: ^18.2.0
       react-dom: ^18.2.0
 
-  '@telegram-apps/toolkit@1.1.1':
-    resolution: {integrity: sha512-+vhKx6ngfvjyTE6Xagl3z1TPVbfx5s7xAkcYzCdHYUo6T60jLIqLgyZMcI1UPoIAMuMu1pHoO+p8QNCj/+tFmw==}
-
   '@telegram-apps/toolkit@2.1.3':
     resolution: {integrity: sha512-LPUBL7hxQTOr+Dowyk9a1O82nQS4ja4+OYiYWtvqq5nNUHC6Gbbus0zGWCbFcj9CLnIzaeb5HWOg5iSnhoRcyg==}
-
-  '@telegram-apps/transformers@1.2.2':
-    resolution: {integrity: sha512-vvMwXckd1D7Ozc0h66PSUwF5QLrRV9HlGJFFeBuUex8QEk5mSPtsJkLiqB8aBbwuFDa91+TUSM/CxqPZO/e9YQ==}
-    deprecated: This package is not supported anymore. Use @tma.js/transfomers instead
 
   '@telegram-apps/transformers@2.2.6':
     resolution: {integrity: sha512-MMBRs3demeBT9Cd614KKZmak7eEyNdEbfu99a0SwEEJe2oIODjJLrUxrhUcAOc5wvTRfrKka27VXVgruauLhdg==}
     deprecated: This package is not supported anymore. Use @tma.js/transfomers instead
-
-  '@telegram-apps/types@1.2.1':
-    resolution: {integrity: sha512-so4HLh7clur0YyMthi9KVIgWoGpZdXlFOuQjk3+Q5NAvJZ11nAheBSwPlGw/Ko92+zwvrSBE/lQyN2+p17RP+w==}
-    deprecated: This package is not supported anymore. Use @tma.js/types instead
 
   '@telegram-apps/types@2.0.3':
     resolution: {integrity: sha512-pXh9BdnLZF3e2BGc4WL+RTRMAUpqKpaSP3Rs8rB4WyRwIoRSGWFKE4gtT/9m42LGixB8YVwdo/pJ+9XO765XEA==}
@@ -1622,12 +1611,6 @@ packages:
     peerDependencies:
       eslint: '>=7.0.0'
 
-  eslint-config-prettier@9.1.2:
-    resolution: {integrity: sha512-iI1f+D2ViGn+uvv5HuHVUamg8ll4tN+JRHGc6IJi4TP9Kl976C57fzPXgseXNs8v0iA8aSJpHsTWjDb9QJamGQ==}
-    hasBin: true
-    peerDependencies:
-      eslint: '>=7.0.0'
-
   eslint-import-resolver-node@0.3.9:
     resolution: {integrity: sha512-WFj2isz22JahUv+B788TlO3N6zL3nNJGU8CcZbPZvVEkBPaJdCV4vy5wyghty5ROFbCRnm132v8BScu5/1BQ8g==}
 
@@ -2178,9 +2161,6 @@ packages:
     engines: {node: '>=10'}
     hasBin: true
 
-  mnemonist@0.40.0:
-    resolution: {integrity: sha512-kdd8AFNig2AD5Rkih7EPCXhu/iMvwevQFX/uEiGhZyPZi7fHqOoF4V4kHLpCfysxXMgQ4B52kdPMCwARshKvEg==}
-
   mri@1.2.0:
     resolution: {integrity: sha512-tzzskb3bG8LvYGFF/mDTpq3jpI6Q9wc3LEmBaghu+DdCssd1FakN7Bc0hVNmEyGq1bq3RgfkCb3cmQLpNPOroA==}
     engines: {node: '>=4'}
@@ -2245,9 +2225,6 @@ packages:
   object.values@1.2.1:
     resolution: {integrity: sha512-gXah6aZrcUxjWg2zR2MwouP2eHlCBzdV4pygudehaKXSGW4v2AsRQUK+lwwXhii6KFZcunEnmSUoYp5CXibxtA==}
     engines: {node: '>= 0.4'}
-
-  obliterator@2.0.5:
-    resolution: {integrity: sha512-42CPE9AhahZRsMNslczq0ctAEtqk8Eka26QofnqC346BZdHDySk3LWka23LI7ULIw11NmltpiLagIq8gBozxTw==}
 
   on-exit-leak-free@2.1.2:
     resolution: {integrity: sha512-0eJJY6hXLGf1udHwfNftBqH+g73EU4B504nZeKpz1sYRKafAghwxEJunB2O7rDZkL4PGfsMVnTXZ2EjibbqcsA==}
@@ -3218,10 +3195,10 @@ snapshots:
 
   '@fastify/busboy@2.1.1': {}
 
-  '@fastify/cors@10.1.0':
+  '@fastify/cors@11.2.0':
     dependencies:
       fastify-plugin: 5.1.0
-      mnemonist: 0.40.0
+      toad-cache: 3.7.0
 
   '@fastify/error@4.2.0': {}
 
@@ -3689,11 +3666,13 @@ snapshots:
     transitivePeerDependencies:
       - typescript
 
-  '@telegram-apps/init-data-node@1.2.2':
+  '@telegram-apps/init-data-node@2.0.10(typescript@4.9.5)':
     dependencies:
-      '@telegram-apps/toolkit': 1.1.1
-      '@telegram-apps/transformers': 1.2.2
-      '@telegram-apps/types': 1.2.1
+      '@telegram-apps/transformers': 2.2.6(typescript@4.9.5)
+      '@telegram-apps/types': 2.0.3
+      error-kid: 0.0.7
+    transitivePeerDependencies:
+      - typescript
 
   '@telegram-apps/navigation@1.0.14': {}
 
@@ -3734,14 +3713,15 @@ snapshots:
       - '@types/react'
       - '@types/react-dom'
 
-  '@telegram-apps/toolkit@1.1.1': {}
-
   '@telegram-apps/toolkit@2.1.3': {}
 
-  '@telegram-apps/transformers@1.2.2':
+  '@telegram-apps/transformers@2.2.6(typescript@4.9.5)':
     dependencies:
-      '@telegram-apps/toolkit': 1.1.1
-      '@telegram-apps/types': 1.2.1
+      '@telegram-apps/toolkit': 2.1.3
+      '@telegram-apps/types': 2.0.3
+      valibot: 1.0.0-beta.14(typescript@4.9.5)
+    transitivePeerDependencies:
+      - typescript
 
   '@telegram-apps/transformers@2.2.6(typescript@5.9.3)':
     dependencies:
@@ -3750,8 +3730,6 @@ snapshots:
       valibot: 1.0.0-beta.14(typescript@5.9.3)
     transitivePeerDependencies:
       - typescript
-
-  '@telegram-apps/types@1.2.1': {}
 
   '@telegram-apps/types@2.0.3': {}
 
@@ -4566,10 +4544,6 @@ snapshots:
     dependencies:
       eslint: 9.39.2
 
-  eslint-config-prettier@9.1.2(eslint@9.39.2):
-    dependencies:
-      eslint: 9.39.2
-
   eslint-import-resolver-node@0.3.9:
     dependencies:
       debug: 3.2.7
@@ -4625,15 +4599,6 @@ snapshots:
       synckit: 0.11.11
     optionalDependencies:
       eslint-config-prettier: 10.1.8(eslint@9.39.2)
-
-  eslint-plugin-prettier@5.5.4(eslint-config-prettier@9.1.2(eslint@9.39.2))(eslint@9.39.2)(prettier@3.7.4):
-    dependencies:
-      eslint: 9.39.2
-      prettier: 3.7.4
-      prettier-linter-helpers: 1.0.0
-      synckit: 0.11.11
-    optionalDependencies:
-      eslint-config-prettier: 9.1.2(eslint@9.39.2)
 
   eslint-plugin-react@7.37.5(eslint@9.39.2):
     dependencies:
@@ -5184,10 +5149,6 @@ snapshots:
 
   mkdirp@1.0.4: {}
 
-  mnemonist@0.40.0:
-    dependencies:
-      obliterator: 2.0.5
-
   mri@1.2.0: {}
 
   ms@2.1.3: {}
@@ -5247,8 +5208,6 @@ snapshots:
       call-bound: 1.0.4
       define-properties: 1.2.1
       es-object-atoms: 1.1.1
-
-  obliterator@2.0.5: {}
 
   on-exit-leak-free@2.1.2: {}
 
@@ -5838,6 +5797,10 @@ snapshots:
   valibot@1.0.0(typescript@5.9.3):
     optionalDependencies:
       typescript: 5.9.3
+
+  valibot@1.0.0-beta.14(typescript@4.9.5):
+    optionalDependencies:
+      typescript: 4.9.5
 
   valibot@1.0.0-beta.14(typescript@5.9.3):
     optionalDependencies:

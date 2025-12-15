@@ -1,7 +1,7 @@
-import Fastify from "fastify";
-import { fetchLiveCurrencies, fetchTimeframe } from "./api.js";
-import cors from "@fastify/cors";
-import { validate } from "@telegram-apps/init-data-node";
+import Fastify from 'fastify';
+import { fetchLiveCurrencies, fetchTimeframe } from './api.js';
+import cors from '@fastify/cors';
+import { validate } from '@telegram-apps/init-data-node';
 
 export const app = Fastify({
   logger: true,
@@ -11,33 +11,33 @@ async function validateInitData(request, reply) {
   const { init_data } = request.headers;
 
   if (!init_data) {
-    return reply.status(400).send({ error: "Missing initData" });
+    return reply.status(400).send({ error: 'Missing initData' });
   }
 
   try {
     validate(init_data, process.env.BOT_TOKEN, { expiresIn: 0 });
   } catch (e) {
-    return reply.status(403).send({ error: "Invalid or expired initData" });
+    return reply.status(403).send({ error: 'Invalid or expired initData' });
   }
 }
 
 app.register(cors, {
-  origin: ["https://localhost:5173", "https://tma-exchange-rate.vercel.app"],
-  methods: ["GET", "POST", "PUT", "DELETE"],
+  origin: ['https://localhost:5173', 'https://tma-exchange-rate.vercel.app'],
+  methods: ['GET', 'POST', 'PUT', 'DELETE'],
 });
 
 // https://apilayer.com/marketplace/exchangerates_data-api#rate-limits
-app.addHook("preHandler", validateInitData);
+app.addHook('preHandler', validateInitData);
 
 app.get(
-  "/live",
+  '/live',
   {
     schema: {
       querystring: {
-        type: "object",
+        type: 'object',
         properties: {
-          source: { type: "string" },
-          currencies: { type: "string" },
+          source: { type: 'string' },
+          currencies: { type: 'string' },
         },
       },
     },
@@ -52,24 +52,24 @@ app.get(
       return reply.send(response);
     } catch (error) {
       app.log.error(error);
-      return reply.status(500).send({ error: "Failed to fetch data" });
+      return reply.status(500).send({ error: 'Failed to fetch data' });
     }
   }
 );
 
 app.get(
-  "/timeframe",
+  '/timeframe',
   {
     schema: {
       querystring: {
-        type: "object",
+        type: 'object',
         properties: {
-          start_date: { type: "string" },
-          end_date: { type: "string" },
-          source: { type: "string" },
-          currencies: { type: "string" },
+          start_date: { type: 'string' },
+          end_date: { type: 'string' },
+          source: { type: 'string' },
+          currencies: { type: 'string' },
         },
-        required: ["start_date", "end_date"],
+        required: ['start_date', 'end_date'],
       },
     },
   },
@@ -82,7 +82,7 @@ app.get(
       return reply.send(response);
     } catch (error) {
       app.log.error(error);
-      return reply.status(500).send({ error: "Failed to fetch data" });
+      return reply.status(500).send({ error: 'Failed to fetch data' });
     }
   }
 );
