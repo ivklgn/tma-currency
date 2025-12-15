@@ -1,3 +1,5 @@
+import { apiError } from './errors.js';
+
 export async function fetchLiveCurrencies({ source, currencies }) {
   const url = new URL(`${process.env.API_URL}/latest`);
 
@@ -17,7 +19,7 @@ export async function fetchLiveCurrencies({ source, currencies }) {
   });
 
   if (!response.ok) {
-    throw new Error('Failed to receive data from external API');
+    throw apiError('ResponseNotOk', 'Failed to receive data from external API');
   }
 
   return await response.json();
@@ -45,7 +47,7 @@ export async function fetchTimeframe({ start_date, end_date, source, currencies 
   });
 
   if (!response.ok) {
-    throw new Error('Failed to receive data from external API');
+    throw apiError('ResponseNotOk', 'Failed to receive data from external API');
   }
 
   return await response.json();

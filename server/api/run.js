@@ -1,4 +1,5 @@
 import { app } from './app.js';
+import { serverError } from './errors.js';
 
 const port = normalizePort(process.env.PORT || '8080');
 
@@ -7,17 +8,13 @@ const port = normalizePort(process.env.PORT || '8080');
     await app.listen({ port, host: '0.0.0.0' });
     onListening();
   } catch (err) {
-    app.log.error(err);
+    serverError('RunError', 'Failed to start server', { originalError: err }).emit();
     process.exit(1);
   }
 })();
 
 app.addHook('onError', async (request, reply, error) => {
   onError(error);
-});
-
-app.addHook('onReady', async () => {
-  console.log('app is ready');
 });
 
 function normalizePort(val) {
@@ -40,15 +37,17 @@ function onError(error) {
   // Handle specific listen errors with friendly messages
   switch (error.code) {
     case 'EACCES':
-      console.error(bind + ' requires elevated privileges');
+      serverError('RunError', bind + ' requires elevated privileges', {
+        originalError: error,
+      }).emit();
       process.exit(1);
       break;
     case 'EADDRINUSE':
-      console.error(bind + ' is already in use');
+      serverError('RunError', bind + ' is already in use', { originalError: error }).emit();
       process.exit(1);
       break;
     default:
-      console.error('Unexpected error: ', error);
+      serverError('UnexpectedError', 'Unknown error', { originalError: error }).emit();
       process.exit(1);
   }
 }

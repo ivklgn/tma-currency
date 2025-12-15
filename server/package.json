@@ -13,6 +13,7 @@
     "@fastify/autoload": "^6.3.1",
     "@fastify/cors": "^11.2.0",
     "@telegram-apps/init-data-node": "^2.0.10",
+    "conway-errors": "^3.2.1",
     "fastify": "^5.6.2"
   },
   "devDependencies": {
