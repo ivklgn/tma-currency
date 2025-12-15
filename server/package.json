@@ -1,5 +1,5 @@
 {
-  "name": "tma-exchange-rate-serverless",
+  "name": "@tma-exchange-rate/server",
   "license": "MIT",
   "type": "module",
   "private": true,
@@ -21,6 +21,5 @@
     "eslint-config-prettier": "^9.1.0",
     "eslint-plugin-prettier": "^5.2.1",
     "prettier": "^3.4.2"
-  },
-  "packageManager": "pnpm@9.15.3+sha512.1f79bc245a66eb0b07c5d4d83131240774642caaa86ef7d0434ab47c0d16f66b04e21e0c086eb61e62c77efc4d7f7ec071afad3796af64892fae66509173893a"
+  }
 }

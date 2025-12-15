@@ -2,7 +2,7 @@ import { Section, Cell, List, Chip, Placeholder, Spinner } from '@telegram-apps/
 import { useEffect, useMemo } from 'react';
 import { Page } from '@/components/Page.tsx';
 import ReactCountryFlag from 'react-country-flag';
-import { useNavigate } from 'react-router';
+import { useNavigate } from 'react-router-dom';
 import { useAction, useAtom } from '@reatom/npm-react';
 import { targetCurrenciesAtom } from '../exchange/model';
 import { currencyCountryCodes } from '../exchange/country-codes';
