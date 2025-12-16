@@ -4,9 +4,10 @@ React frontend for TMA Exchange Rate.
 
 ## Stack
 
-- React 19 + Vite
-- Reatom (state management)
-- Telegram Mini Apps SDK
+- [React 19](https://react.dev/) + [Vite](https://vite.dev/)
+- [Reatom](https://reatom.dev/) - Sstate manager for any app
+- [Telegram Mini Apps SDK](https://docs.telegram-mini-apps.com/)
+- [conway-errors](https://github.com/ivklgn/conway-errors) - A convenient primitive for creating, structing and throwing errors
 
 ## Development
 
