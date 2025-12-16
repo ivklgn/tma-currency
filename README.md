@@ -28,7 +28,7 @@ pnpm install
 # Mini App (https://localhost:5173)
 pnpm dev
 
-# Server (http://localhost:3000)
+# Server (http://localhost:8080)
 pnpm dev:server
 ```
 
