@@ -3,6 +3,10 @@
   "private": true,
   "version": "1.1.1",
   "type": "module",
+  "packageManager": "pnpm@10.0.0",
+  "engines": {
+    "node": "20.x"
+  },
   "scripts": {
     "deploy": "gh-pages -d dist",
     "dev": "vite",

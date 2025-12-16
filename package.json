@@ -11,5 +11,8 @@
     "lint:fix": "pnpm -r lint:fix",
     "format": "pnpm -r format"
   },
-  "packageManager": "pnpm@9.15.3"
+  "packageManager": "pnpm@10.0.0",
+  "engines": {
+    "node": "20.x"
+  }
 }
