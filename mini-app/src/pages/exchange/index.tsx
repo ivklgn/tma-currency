@@ -98,6 +98,11 @@ export const ExchangePage = reatomComponent(() => {
 
         {!exchangeRatesError && (
           <Section header="Exchange rate">
+            <CurrencySelectModal
+              opener={<ButtonCell before={<Icon28AddCircle />}>Add currency</ButtonCell>}
+              onSelect={onChangeTargetCurrencyAction}
+            />
+
             {targetCurrencies.length === 0 && (
               <Cell>
                 <Text>No selected exchange rates.</Text>
@@ -139,11 +144,6 @@ export const ExchangePage = reatomComponent(() => {
                 </Cell>
               </Link>
             ))}
-
-            <CurrencySelectModal
-              opener={<ButtonCell before={<Icon28AddCircle />}>Add currency</ButtonCell>}
-              onSelect={onChangeTargetCurrencyAction}
-            />
           </Section>
         )}
       </List>
