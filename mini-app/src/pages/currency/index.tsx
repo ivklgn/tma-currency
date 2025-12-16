@@ -1,5 +1,5 @@
 import { Section, Cell, List, Chip, Placeholder, Spinner } from '@telegram-apps/telegram-ui';
-import { useEffect, useMemo } from 'react';
+import { lazy, Suspense, useEffect, useMemo } from 'react';
 import { Page } from '@/components/Page.tsx';
 import ReactCountryFlag from 'react-country-flag';
 import { useNavigate, useSearchParams } from 'react-router-dom';
@@ -19,9 +19,10 @@ import {
   setCurrentCurrencyFromUrl,
   fetchHistoricalRates,
 } from './model';
-import { Chart } from 'react-google-charts';
 import { miniApp, useSignal } from '@telegram-apps/sdk-react';
 import { getHistoricalRatesCache, prepareRates, withChartData } from '@/pages/currency/utils';
+
+const Chart = lazy(() => import('react-google-charts').then((m) => ({ default: m.Chart })));
 
 import './CurrencyPage.css';
 
@@ -141,33 +142,41 @@ export const CurrencyPage = reatomComponent(() => {
                 </div>
               )}
 
-              <Chart
-                className={`chart${isLoadingHistoricalRates ? ' chart_loading' : ''}`}
-                chartType="LineChart"
-                width="100%"
-                height="340px"
-                data={historicalData}
-                options={{
-                  curveType: 'function',
-                  backgroundColor: {
-                    fill: isDark ? '#0f0f0f' : '#fff',
-                    stroke: '',
-                    strokeWidth: 0,
-                  },
-                  legend: 'none',
-                  hAxis: {
-                    gridlines: { count: 3 },
-                    textStyle: {
-                      color: isDark ? '#708499' : '#0f0f0f',
+              <Suspense
+                fallback={
+                  <div className="chartSpinner">
+                    <Spinner size="m" />
+                  </div>
+                }
+              >
+                <Chart
+                  className={`chart${isLoadingHistoricalRates ? ' chart_loading' : ''}`}
+                  chartType="LineChart"
+                  width="100%"
+                  height="340px"
+                  data={historicalData}
+                  options={{
+                    curveType: 'function',
+                    backgroundColor: {
+                      fill: isDark ? '#0f0f0f' : '#fff',
+                      stroke: '',
+                      strokeWidth: 0,
                     },
-                  },
-                  vAxis: {
-                    textStyle: {
-                      color: isDark ? '#708499' : '#0f0f0f',
+                    legend: 'none',
+                    hAxis: {
+                      gridlines: { count: 3 },
+                      textStyle: {
+                        color: isDark ? '#708499' : '#0f0f0f',
+                      },
                     },
-                  },
-                }}
-              />
+                    vAxis: {
+                      textStyle: {
+                        color: isDark ? '#708499' : '#0f0f0f',
+                      },
+                    },
+                  }}
+                />
+              </Suspense>
             </div>
           </Section>
         )}

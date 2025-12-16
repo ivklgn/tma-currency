@@ -23,7 +23,17 @@ if (import.meta.env.DEV) {
   rootFrame.run(connectLogger);
 }
 
-const root = createRoot(document.getElementById('root')!);
+const root = createRoot(document.getElementById('root')!, {
+  onCaughtError: (error, errorInfo) => {
+    console.error('Caught error:', error, errorInfo.componentStack);
+  },
+  onUncaughtError: (error, errorInfo) => {
+    console.error('Uncaught error:', error, errorInfo.componentStack);
+  },
+  onRecoverableError: (error, errorInfo) => {
+    console.error('Recoverable error:', error, errorInfo.componentStack);
+  },
+});
 
 try {
   // Configure all application dependencies.
