@@ -3,11 +3,11 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "pnpm --filter @tma-exchange-rate/mini-app dev",
-    "dev:server": "pnpm --filter @tma-exchange-rate/server dev",
-    "build": "pnpm --filter @tma-exchange-rate/mini-app build",
+    "dev": "pnpm --filter @tma-currency/mini-app dev",
+    "dev:server": "pnpm --filter @tma-currency/server dev",
+    "build": "pnpm --filter @tma-currency/mini-app build",
     "lint": "pnpm -r lint",
-    "types": "pnpm --filter @tma-exchange-rate/mini-app types",
+    "types": "pnpm --filter @tma-currency/mini-app types",
     "lint:fix": "pnpm -r lint:fix",
     "format": "pnpm -r format"
   },

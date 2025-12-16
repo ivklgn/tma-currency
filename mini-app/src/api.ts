@@ -1,4 +1,4 @@
-import { APILayerError } from './errors';
+import { tmaCurrencyMiniAppError } from './errors';
 import { retrieveRawInitData } from '@telegram-apps/sdk-react';
 
 // https://apilayer.com/marketplace/exchangerates_data-api#rate-limits
@@ -64,7 +64,7 @@ export async function fetcher<K extends keyof EndpointsResponse>(
 
   if (!response.ok) {
     const errorData = await response.json();
-    const error = APILayerError(
+    const error = tmaCurrencyMiniAppError(
       'BackendInteractionError',
       `Error fetching data from ${endpoint}: ${response.status} ${response.statusText}, Details: ${JSON.stringify(
         errorData

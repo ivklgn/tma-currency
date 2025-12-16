@@ -5,6 +5,7 @@ import {
   type PropsWithChildren,
   type ReactNode,
 } from 'react';
+import { tmaCurrencyMiniAppError } from '../errors';
 
 export interface ErrorBoundaryProps extends PropsWithChildren {
   fallback?: ReactNode | ComponentType<{ error: unknown }>;
@@ -23,6 +24,9 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
   > = (error) => ({ error });
 
   componentDidCatch(error: Error) {
+    tmaCurrencyMiniAppError('FrontendLogicError', 'React component render failed', {
+      originalError: error,
+    }).emit({ extendedParams: { componentStack: error.stack } });
     this.setState({ error });
   }
 

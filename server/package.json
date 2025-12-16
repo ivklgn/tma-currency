@@ -1,5 +1,5 @@
 {
-  "name": "@tma-exchange-rate/server",
+  "name": "@tma-currency/server",
   "license": "MIT",
   "type": "module",
   "private": true,

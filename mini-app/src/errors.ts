@@ -1,11 +1,19 @@
 import { createError } from 'conway-errors';
 
-const createErrorCtx = createError([
-  { errorType: 'FrontendLogicError' },
-  { errorType: 'BackendInteractionError' },
-  { errorType: 'TelegramError' },
-] as const);
+const createErrorCtx = createError(
+  [
+    { errorType: 'FrontendLogicError' },
+    { errorType: 'BackendInteractionError' },
+    { errorType: 'TelegramError' },
+    { errorType: 'StorageError' },
+  ] as const,
+  {
+    handleEmit: (err) => {
+      console.error(err);
+    },
+  }
+);
 
-export const errorCtx = createErrorCtx('TMA-exchange');
+const tmaCurrencyMiniAppContext = createErrorCtx('TMA-Currency-Mini-App');
 
-export const APILayerError = errorCtx.feature('APILayerError');
+export const tmaCurrencyMiniAppError = tmaCurrencyMiniAppContext.feature('TMA-Currency-Mini-App');
