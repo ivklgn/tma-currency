@@ -3,7 +3,6 @@
   "license": "MIT",
   "type": "module",
   "private": true,
-  "packageManager": "pnpm@9.15.3",
   "scripts": {
     "dev": "node --env-file=.env.development --watch ./api/run.js",
     "lint": "eslint .",
