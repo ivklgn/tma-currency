@@ -1,7 +1,13 @@
 import { createError } from 'conway-errors';
 
-const createServerErrorContext = createError(
-  [{ errortype: 'RunError' }, { errorType: 'DataHandlingError' }],
+const createErrorContext = createError(
+  [
+    { errorType: 'StartupError' },
+    { errorType: 'UnexpectedError' },
+    { errorType: 'DataHandlingError' },
+    { errorType: 'NetworkError' },
+    { errorType: 'NetworkResponseError' },
+  ],
   {
     handleEmit: (err) => {
       console.error(err);
@@ -9,11 +15,6 @@ const createServerErrorContext = createError(
   }
 );
 
-const createAPIErrorContext = createError([{ errorType: 'ResponseNotOk' }], {
-  handleEmit: (err) => {
-    console.error(err);
-  },
-});
+const tmaCurrencyServerContext = createErrorContext('TMA-Currency-Server');
 
-export const serverError = createServerErrorContext('ServerError');
-export const apiError = createAPIErrorContext('APIError');
+export const tmaCurrencyMiniAppError = tmaCurrencyServerContext.feature('ServerError');

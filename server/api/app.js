@@ -2,7 +2,7 @@ import Fastify from 'fastify';
 import { fetchLiveCurrencies, fetchTimeframe } from './api.js';
 import cors from '@fastify/cors';
 import { validate } from '@telegram-apps/init-data-node';
-import { serverError } from './errors.js';
+import { tmaCurrencyMiniAppError } from './errors.js';
 
 export const app = Fastify({
   logger: true,
@@ -52,7 +52,7 @@ app.get(
 
       return reply.send(response);
     } catch (error) {
-      serverError('DataHandlingError', 'Failed to fetch data', { originalError: error }).emit();
+      tmaCurrencyMiniAppError('DataHandlingError', 'Failed to fetch data', { originalError: error }).emit();
       return reply.status(500).send({ error: 'Failed to fetch data' });
     }
   }
@@ -82,7 +82,7 @@ app.get(
 
       return reply.send(response);
     } catch (error) {
-      serverError('DataHandlingError', 'Failed to fetch data', { originalError: error }).emit();
+      tmaCurrencyMiniAppError('DataHandlingError', 'Failed to fetch data', { originalError: error }).emit();
       return reply.status(500).send({ error: 'Failed to fetch data' });
     }
   }

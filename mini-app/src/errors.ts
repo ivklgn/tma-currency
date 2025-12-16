@@ -1,6 +1,6 @@
 import { createError } from 'conway-errors';
 
-const createErrorCtx = createError(
+const createErrorContext = createError(
   [
     { errorType: 'FrontendLogicError' },
     { errorType: 'BackendInteractionError' },
@@ -14,6 +14,6 @@ const createErrorCtx = createError(
   }
 );
 
-const tmaCurrencyMiniAppContext = createErrorCtx('TMA-Currency-Mini-App');
+const tmaCurrencyMiniAppContext = createErrorContext('TMA-Currency-Mini-App');
 
-export const tmaCurrencyMiniAppError = tmaCurrencyMiniAppContext.feature('TMA-Currency-Mini-App');
+export const tmaCurrencyMiniAppError = tmaCurrencyMiniAppContext.feature('ClientError');

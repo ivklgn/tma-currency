@@ -1,4 +1,4 @@
-import { apiError } from './errors.js';
+import { tmaCurrencyMiniAppError } from './errors.js';
 
 export async function fetchLiveCurrencies({ source, currencies }) {
   const url = new URL(`${process.env.API_URL}/latest`);
@@ -11,15 +11,25 @@ export async function fetchLiveCurrencies({ source, currencies }) {
     url.searchParams.set('symbols', currencies);
   }
 
-  const response = await fetch(url, {
-    headers: {
-      'Content-Type': 'application/json',
-      apikey: process.env.API_KEY,
-    },
-  });
+  let response;
+  try {
+    response = await fetch(url, {
+      headers: {
+        'Content-Type': 'application/json',
+        apikey: process.env.API_KEY,
+      },
+    });
+  } catch (err) {
+    throw tmaCurrencyMiniAppError('NetworkError', 'Network request failed', {
+      originalError: err,
+    });
+  }
 
   if (!response.ok) {
-    throw apiError('ResponseNotOk', 'Failed to receive data from external API');
+    throw tmaCurrencyMiniAppError(
+      'NetworkResponseError',
+      'Failed to receive data from external API'
+    );
   }
 
   return await response.json();
@@ -39,15 +49,25 @@ export async function fetchTimeframe({ start_date, end_date, source, currencies 
     url.searchParams.set('symbols', currencies);
   }
 
-  const response = await fetch(url, {
-    headers: {
-      'Content-Type': 'application/json',
-      apikey: process.env.API_KEY,
-    },
-  });
+  let response;
+  try {
+    response = await fetch(url, {
+      headers: {
+        'Content-Type': 'application/json',
+        apikey: process.env.API_KEY,
+      },
+    });
+  } catch (err) {
+    throw tmaCurrencyMiniAppError('NetworkError', 'Network request failed', {
+      originalError: err,
+    });
+  }
 
   if (!response.ok) {
-    throw apiError('ResponseNotOk', 'Failed to receive data from external API');
+    throw tmaCurrencyMiniAppError(
+      'NetworkResponseError',
+      'Failed to receive data from external API'
+    );
   }
 
   return await response.json();
