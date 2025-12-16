@@ -135,10 +135,7 @@ export const ExchangePage = reatomComponent(() => {
                       <Icon24Close />
                     </Tappable>
                   }
-                  subtitle={`${formatMoney(amount || 1, primaryCurrency)} ${primaryCurrency} = ${formatMoney(
-                    rate.rate * (amount || 1),
-                    rate.currency
-                  )} ${rate.currency}`}
+                  subtitle={`1 ${primaryCurrency} = ${formatMoney(rate.rate, rate.currency)} ${rate.currency}`}
                 >
                   {formatMoney(rate.rate * (amount || 1), rate.currency)} ${rate.currency}
                 </Cell>
