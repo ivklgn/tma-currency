@@ -2,6 +2,8 @@
 
 Telegram Mini App for currency exchange rates.
 
+Demo: <https://t.me/currency_app_bot/currency>
+
 ## Structure
 
 ```text
