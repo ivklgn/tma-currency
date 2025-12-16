@@ -39,15 +39,21 @@ export const CurrencyPage = reatomComponent(() => {
   const historicalRatesError = historicalRatesErrorAtom();
   const isDark = useSignal(miniApp.isDark);
 
-  useEffect(() => {
-    setCurrentCurrencyFromUrl(searchParams);
-  }, [searchParams]);
+  useEffect(
+    wrap(() => {
+      setCurrentCurrencyFromUrl(searchParams);
+    }),
+    [searchParams]
+  );
 
-  useEffect(() => {
-    if (currentCurrency && primaryCurrency) {
-      fetchHistoricalRates();
-    }
-  }, [currentCurrency, primaryCurrency, historicalFilter]);
+  useEffect(
+    wrap(() => {
+      if (currentCurrency && primaryCurrency) {
+        fetchHistoricalRates();
+      }
+    }),
+    [currentCurrency, primaryCurrency, historicalFilter]
+  );
 
   const historicalData = useMemo(() => {
     if (historicalRates.length) {
