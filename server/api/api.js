@@ -28,7 +28,10 @@ export async function fetchLiveCurrencies({ source, currencies }) {
   if (!response.ok) {
     throw tmaCurrencyMiniAppError(
       'NetworkResponseError',
-      'Failed to receive data from external API'
+      'Failed to receive data from external API',
+      {
+        extendedParams: { status: response.status, statusText: response.statusText },
+      }
     );
   }
 
@@ -66,7 +69,10 @@ export async function fetchTimeframe({ start_date, end_date, source, currencies 
   if (!response.ok) {
     throw tmaCurrencyMiniAppError(
       'NetworkResponseError',
-      'Failed to receive data from external API'
+      'Failed to receive data from external API',
+      {
+        extendedParams: { status: response.status, statusText: response.statusText },
+      }
     );
   }
 
