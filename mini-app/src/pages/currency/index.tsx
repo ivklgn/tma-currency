@@ -39,7 +39,12 @@ export const CurrencyPage = reatomComponent(() => {
     currentCurrencyAtom.set(currency);
   }, [searchParams]);
 
-  // Historical rates auto-fetch via computed atom (no useEffect needed)
+  // Fetch historical rates when currencies change
+  useEffect(() => {
+    if (currentCurrency && primaryCurrency) {
+      fetchHistoricalRates();
+    }
+  }, [currentCurrency, primaryCurrency]);
 
   const historicalData = useMemo(() => {
     const data = historicalRates.length ? historicalRates : historicalRatesCacheAtom();
