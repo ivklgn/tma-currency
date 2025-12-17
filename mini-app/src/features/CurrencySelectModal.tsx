@@ -53,7 +53,15 @@ export const CurrencySelectModal = reatomComponent<CurrencySelectProps>(({ opene
         })}
       >
         <Modal.Header>Choose currency</Modal.Header>
-        <div style={{ padding: '0 16px' }}>
+        <div
+          style={{
+            padding: '0 16px',
+            position: 'sticky',
+            top: 0,
+            zIndex: 1,
+            backgroundColor: 'var(--tgui--secondary_bg_color)',
+          }}
+        >
           <Input
             header="Currencies"
             placeholder="Search currency"
@@ -61,7 +69,7 @@ export const CurrencySelectModal = reatomComponent<CurrencySelectProps>(({ opene
             value={search}
           />
         </div>
-        <List style={{ height: 'calc(100vh - 400px)', overflow: 'auto' }}>
+        <List style={{ maxHeight: 'calc(100vh - 400px)', overflow: 'auto', paddingBottom: 'env(safe-area-inset-bottom)' }}>
           {filteredCurrencies.map(([code, name]) => (
             <Section key={code}>
               <Cell
