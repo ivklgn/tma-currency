@@ -54,6 +54,7 @@ export const onResetAmountAction = action(() => {
 
 export const onChangePrimaryCurrencyAction = action((currency: string) => {
   primaryCurrencyAtom.set(currency);
+  getNewExchangeRates();
 }, 'onChangePrimaryCurrencyAction');
 
 export const getNewExchangeRates = action(() => {
