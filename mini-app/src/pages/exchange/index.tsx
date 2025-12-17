@@ -137,7 +137,7 @@ export const ExchangePage = reatomComponent(() => {
                   }
                   subtitle={`1 ${primaryCurrency} = ${formatMoney(rate.rate, rate.currency)} ${rate.currency}`}
                 >
-                  {formatMoney(rate.rate * (amount || 1), rate.currency)} ${rate.currency}
+                  {formatMoney(rate.rate * (amount || 1), rate.currency)} {rate.currency}
                 </Cell>
               </Link>
             ))}
