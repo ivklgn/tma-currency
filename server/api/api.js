@@ -1,7 +1,7 @@
 import { tmaCurrencyMiniAppError } from './errors.js';
 
 const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
-const REQUEST_DELAY_MS = 150;
+const REQUEST_DELAY_MS = 250;
 
 export async function fetchLiveCurrencies({ source, currencies }) {
   const url = new URL(`${process.env.API_URL}/latest`);

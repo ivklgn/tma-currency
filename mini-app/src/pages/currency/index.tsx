@@ -93,7 +93,7 @@ export const CurrencyPage = reatomComponent(() => {
           {`${formatMoney(currentRate.rate || 1, currentRate.currency)} ${currentRate.currency} `}
         </Cell>
 
-        {isLoadingHistoricalRates && historicalData.length === 0 && !historicalRatesError && (
+        {isLoadingHistoricalRates && (
           <Section>
             <div style={{ display: 'flex', justifyContent: 'center', padding: '40px 0' }}>
               <Spinner size="m" />
@@ -104,12 +104,6 @@ export const CurrencyPage = reatomComponent(() => {
         {!historicalRatesError && historicalData.length > 0 && (
           <Section>
             <div className="chartWrapper">
-              {isLoadingHistoricalRates && (
-                <div className="chartSpinner">
-                  <Spinner size="m" />
-                </div>
-              )}
-
               <Suspense
                 fallback={
                   <div className="chartSpinner">
