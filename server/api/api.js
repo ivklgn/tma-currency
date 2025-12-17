@@ -3,8 +3,6 @@ import { tmaCurrencyMiniAppError } from './errors.js';
 export async function fetchLiveCurrencies({ source, currencies }) {
   const url = new URL(`${process.env.API_URL}/latest`);
 
-  url.searchParams.set('apikey', process.env.API_KEY);
-
   if (source) {
     url.searchParams.set('base_currency', source);
   }
@@ -17,7 +15,7 @@ export async function fetchLiveCurrencies({ source, currencies }) {
   try {
     response = await fetch(url, {
       headers: {
-        'Content-Type': 'application/json',
+        apikey: process.env.API_KEY,
       },
     });
   } catch (err) {
@@ -68,7 +66,6 @@ function getDatesBetween(startDate, endDate) {
 async function fetchHistoricalForDate({ date, source, currencies }) {
   const url = new URL(`${process.env.API_URL}/historical`);
 
-  url.searchParams.set('apikey', process.env.API_KEY);
   url.searchParams.set('date', date);
 
   if (source) {
@@ -81,7 +78,7 @@ async function fetchHistoricalForDate({ date, source, currencies }) {
 
   const response = await fetch(url, {
     headers: {
-      'Content-Type': 'application/json',
+      apikey: process.env.API_KEY,
     },
   });
 
