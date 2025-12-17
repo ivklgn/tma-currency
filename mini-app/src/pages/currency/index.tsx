@@ -1,4 +1,4 @@
-import { Section, Cell, List, Chip, Placeholder, Spinner } from '@telegram-apps/telegram-ui';
+import { Section, Cell, List, Placeholder, Spinner } from '@telegram-apps/telegram-ui';
 import { lazy, Suspense, useEffect, useMemo } from 'react';
 import { Page } from '@/components/Page.tsx';
 import ReactCountryFlag from 'react-country-flag';
@@ -10,13 +10,11 @@ import { currencyCountryCodes } from '../exchange/country-codes';
 import { formatMoney } from '../../helpers/money';
 import {
   currentCurrencyAtom,
-  historicalFilterAtom,
   historicalRatesAtom,
   historicalRatesCacheAtom,
   isLoadingHistoricalRatesAtom,
   historicalRatesErrorAtom,
   primaryCurrencyAtom,
-  onChangeHistoricalFilterAction,
   setCurrentCurrencyFromUrl,
   fetchHistoricalRates,
 } from './model';
@@ -30,7 +28,6 @@ import './CurrencyPage.css';
 export const CurrencyPage = reatomComponent(() => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
-  const historicalFilter = historicalFilterAtom();
   const primaryCurrency = primaryCurrencyAtom();
   const currentCurrency = currentCurrencyAtom();
   const targetCurrencies = targetCurrenciesAtom();
@@ -54,7 +51,7 @@ export const CurrencyPage = reatomComponent(() => {
         fetchHistoricalRates();
       }
     }),
-    [currentCurrency, primaryCurrency, historicalFilter]
+    [currentCurrency, primaryCurrency]
   );
 
   const historicalData = useMemo(() => {
@@ -96,42 +93,12 @@ export const CurrencyPage = reatomComponent(() => {
           {`${formatMoney(currentRate.rate || 1, currentRate.currency)} ${currentRate.currency} `}
         </Cell>
 
-        {!historicalRatesError && historicalData.length > 0 && (
-          <div
-            style={{
-              display: 'flex',
-              gap: 16,
-            }}
-          >
-            <Chip
-              disabled={isLoadingHistoricalRates}
-              mode={historicalFilter === '3d' ? 'mono' : 'outline'}
-              onClick={wrap(() => onChangeHistoricalFilterAction('3d'))}
-            >
-              3d
-            </Chip>
-            <Chip
-              disabled={isLoadingHistoricalRates}
-              mode={historicalFilter === '1w' ? 'mono' : 'outline'}
-              onClick={wrap(() => onChangeHistoricalFilterAction('1w'))}
-            >
-              1w
-            </Chip>
-            <Chip
-              disabled={isLoadingHistoricalRates}
-              mode={historicalFilter === '1m' ? 'mono' : 'outline'}
-              onClick={wrap(() => onChangeHistoricalFilterAction('1m'))}
-            >
-              1m
-            </Chip>
-            <Chip
-              disabled={isLoadingHistoricalRates}
-              mode={historicalFilter === '1y' ? 'mono' : 'outline'}
-              onClick={wrap(() => onChangeHistoricalFilterAction('1y'))}
-            >
-              1y
-            </Chip>
-          </div>
+        {isLoadingHistoricalRates && historicalData.length === 0 && !historicalRatesError && (
+          <Section>
+            <div style={{ display: 'flex', justifyContent: 'center', padding: '40px 0' }}>
+              <Spinner size="m" />
+            </div>
+          </Section>
         )}
 
         {!historicalRatesError && historicalData.length > 0 && (
