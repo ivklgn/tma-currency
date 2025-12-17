@@ -1,4 +1,3 @@
-import { getLocalStorageValue } from '@/helpers/localStorage.ts';
 import { IHistoricalRate } from '@/pages/currency/model.ts';
 
 export function isRatesValid(rates: IHistoricalRate[]) {
@@ -19,15 +18,4 @@ export function prepareRates(rates: IHistoricalRate[]) {
 
 export function withChartData(list: IHistoricalRate[]) {
   return [['date', 'rate'], ...list.map((hr) => [hr.date, hr.rate])];
-}
-
-export function getHistoricalRatesCache() {
-  const defaultData: unknown[] = [];
-  const data = getLocalStorageValue('historicalRatesCache', defaultData);
-
-  if (Array.isArray(data)) {
-    return data;
-  }
-
-  return defaultData;
 }

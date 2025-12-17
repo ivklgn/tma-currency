@@ -1,7 +1,6 @@
 import { action, atom, computed, sleep, withAsyncData, withLocalStorage, wrap } from '@reatom/core';
 import { fetcher } from '../../api';
 import { formatDate } from '../../helpers/date';
-import { setLocalStorageValue } from '@/helpers/localStorage.ts';
 import { prepareRates } from '@/pages/currency/utils.ts';
 import { isProgressVisibleAtom } from '@/features/ProgressBar/model';
 
@@ -19,6 +18,11 @@ export const primaryCurrencyAtom = atom('USD', 'primaryCurrencyAtom').extend(
 );
 
 export const currentCurrencyAtom = atom('', 'currentCurrencyAtom');
+
+export const historicalRatesCacheAtom = atom<IHistoricalRate[]>(
+  [],
+  'historicalRatesCacheAtom'
+).extend(withLocalStorage('historicalRatesCache'));
 
 export const onChangeHistoricalFilterAction = action(
   (filter: HistoricalFilter) => historicalFilterAtom.set(filter),
@@ -82,7 +86,7 @@ export const fetchHistoricalRates = action(async () => {
     });
 
     if (historicalFilter === '3d') {
-      setLocalStorageValue('historicalRatesCache', prepareRates(result));
+      historicalRatesCacheAtom.set(prepareRates(result));
     }
 
     return result;

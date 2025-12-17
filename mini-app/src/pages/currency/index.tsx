@@ -12,6 +12,7 @@ import {
   currentCurrencyAtom,
   historicalFilterAtom,
   historicalRatesAtom,
+  historicalRatesCacheAtom,
   isLoadingHistoricalRatesAtom,
   historicalRatesErrorAtom,
   primaryCurrencyAtom,
@@ -20,7 +21,7 @@ import {
   fetchHistoricalRates,
 } from './model';
 import { miniApp, useSignal } from '@telegram-apps/sdk-react';
-import { getHistoricalRatesCache, prepareRates, withChartData } from '@/pages/currency/utils';
+import { prepareRates, withChartData } from '@/pages/currency/utils';
 
 const Chart = lazy(() => import('react-google-charts').then((m) => ({ default: m.Chart })));
 
@@ -61,7 +62,7 @@ export const CurrencyPage = reatomComponent(() => {
       return withChartData(prepareRates(historicalRates));
     }
 
-    return withChartData(getHistoricalRatesCache());
+    return withChartData(historicalRatesCacheAtom());
   }, [historicalRates]);
 
   useEffect(() => {
