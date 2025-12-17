@@ -27,7 +27,7 @@ app.register(cors, {
   methods: ['GET', 'POST', 'PUT', 'DELETE'],
 });
 
-// https://apilayer.com/marketplace/exchangerates_data-api#rate-limits
+// https://freecurrencyapi.com/docs
 app.addHook('preHandler', validateInitData);
 
 app.get(
@@ -52,7 +52,9 @@ app.get(
 
       return reply.send(response);
     } catch (error) {
-      tmaCurrencyMiniAppError('DataHandlingError', 'Failed to fetch data', { originalError: error }).emit();
+      tmaCurrencyMiniAppError('DataHandlingError', 'Failed to fetch data', {
+        originalError: error,
+      }).emit();
       return reply.status(500).send({ error: 'Failed to fetch data' });
     }
   }
@@ -82,7 +84,9 @@ app.get(
 
       return reply.send(response);
     } catch (error) {
-      tmaCurrencyMiniAppError('DataHandlingError', 'Failed to fetch data', { originalError: error }).emit();
+      tmaCurrencyMiniAppError('DataHandlingError', 'Failed to fetch data', {
+        originalError: error,
+      }).emit();
       return reply.status(500).send({ error: 'Failed to fetch data' });
     }
   }

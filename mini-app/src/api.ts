@@ -1,7 +1,7 @@
 import { tmaCurrencyMiniAppError } from './errors';
 import { retrieveRawInitData } from '@telegram-apps/sdk-react';
 
-// https://apilayer.com/marketplace/exchangerates_data-api#rate-limits
+// https://freecurrencyapi.com/docs
 type EndpointsResponse = {
   '/list': {
     params: undefined;
