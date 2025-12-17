@@ -57,7 +57,7 @@ export const CurrencySelectModal = reatomComponent<CurrencySelectProps>(({ opene
           <Input
             header="Currencies"
             placeholder="Search currency"
-            onChange={onChangeSearch}
+            onChange={wrap(onChangeSearch)}
             value={search}
           />
         </div>

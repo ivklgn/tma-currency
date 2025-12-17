@@ -46,11 +46,10 @@ export const ExchangePage = reatomComponent(() => {
           <Input
             className="input"
             placeholder="Amount"
-            defaultValue={1}
             type="number"
             min={1}
             onChange={wrap(onChangeAmountAction)}
-            value={amount}
+            value={String(amount)}
             after={
               <Tappable
                 Component="div"
