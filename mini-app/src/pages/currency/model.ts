@@ -1,4 +1,4 @@
-import { atom, computed, effect, sleep, withAsyncData, withLocalStorage, wrap } from '@reatom/core';
+import { atom, computed, sleep, withAsyncData, withLocalStorage, wrap } from '@reatom/core';
 import { fetcher } from '../../api';
 import { formatDate } from '../../helpers/date';
 import { prepareRates } from '@/pages/currency/utils.ts';
@@ -28,31 +28,32 @@ export const fetchHistoricalRates = computed(async () => {
     return [];
   }
 
-  await wrap(sleep(400));
+  isProgressVisibleAtom.set(true);
 
-  const startDate = new Date();
-  startDate.setDate(startDate.getDate() - 3);
+  try {
+    await wrap(sleep(400));
 
-  const { rates } = await wrap(
-    fetcher('/timeframe', {
-      currencies: [currentCurrency],
-      start_date: formatDate(startDate),
-      end_date: formatDate(new Date()),
-      source: primaryCurrency,
-    })
-  );
+    const startDate = new Date();
+    startDate.setDate(startDate.getDate() - 3);
 
-  const result = Object.entries(rates).map(([date, rate]) => {
-    return { date, rate: rate[currentCurrency] };
-  });
+    const { rates } = await wrap(
+      fetcher('/timeframe', {
+        currencies: [currentCurrency],
+        start_date: formatDate(startDate),
+        end_date: formatDate(new Date()),
+        source: primaryCurrency,
+      })
+    );
 
-  const preparedResult = prepareRates(result);
-  historicalRatesCacheAtom.set(preparedResult);
+    const result = Object.entries(rates).map(([date, rate]) => {
+      return { date, rate: rate[currentCurrency] };
+    });
 
-  return preparedResult;
+    const preparedResult = prepareRates(result);
+    historicalRatesCacheAtom.set(preparedResult);
+
+    return preparedResult;
+  } finally {
+    isProgressVisibleAtom.set(false);
+  }
 }, 'fetchHistoricalRates').extend(withAsyncData({ initState: [] as IHistoricalRate[] }));
-
-effect(() => {
-  const isPending = fetchHistoricalRates.pending() > 0;
-  isProgressVisibleAtom.set(isPending);
-}, 'syncProgressVisibility');
