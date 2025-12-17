@@ -1,20 +1,27 @@
-import { Section, Cell, List, Placeholder, Spinner } from '@telegram-apps/telegram-ui';
+import { Section, Cell, List, Chip, Placeholder, Spinner } from '@telegram-apps/telegram-ui';
 import { lazy, Suspense, useEffect, useMemo } from 'react';
 import { Page } from '@/components/Page.tsx';
 import ReactCountryFlag from 'react-country-flag';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { reatomComponent } from '@reatom/react';
+import { wrap } from '@reatom/core';
 import { targetCurrenciesAtom } from '../exchange/model';
 import { currencyCountryCodes } from '../exchange/country-codes';
 import { formatMoney } from '../../helpers/money';
 import {
   currentCurrencyAtom,
+  historicalFilterAtom,
+  historicalRatesAtom,
   historicalRatesCacheAtom,
+  isLoadingHistoricalRatesAtom,
+  historicalRatesErrorAtom,
   primaryCurrencyAtom,
+  onChangeHistoricalFilterAction,
+  setCurrentCurrencyFromUrl,
   fetchHistoricalRates,
 } from './model';
 import { miniApp, useSignal } from '@telegram-apps/sdk-react';
-import { withChartData } from '@/pages/currency/utils';
+import { prepareRates, withChartData } from '@/pages/currency/utils';
 
 const Chart = lazy(() => import('react-google-charts').then((m) => ({ default: m.Chart })));
 
@@ -23,34 +30,46 @@ import './CurrencyPage.css';
 export const CurrencyPage = reatomComponent(() => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
+  const historicalFilter = historicalFilterAtom();
   const primaryCurrency = primaryCurrencyAtom();
   const currentCurrency = currentCurrencyAtom();
   const targetCurrencies = targetCurrenciesAtom();
   const currentRate = targetCurrencies.find((r) => r.currency === currentCurrency);
 
-  const historicalRates = fetchHistoricalRates.data();
-  const isLoadingHistoricalRates = fetchHistoricalRates.pending() > 0;
-  const historicalRatesError = fetchHistoricalRates.error();
+  const historicalRates = historicalRatesAtom();
+  const isLoadingHistoricalRates = isLoadingHistoricalRatesAtom();
+  const historicalRatesError = historicalRatesErrorAtom();
   const isDark = useSignal(miniApp.isDark);
 
-  // Sync URL params to atom
-  useEffect(() => {
-    const currency = searchParams.get('currency') || '';
-    currentCurrencyAtom.set(currency);
-  }, [searchParams]);
+  useEffect(
+    wrap(() => {
+      setCurrentCurrencyFromUrl(searchParams);
+    }),
+    [searchParams]
+  );
 
-  // Historical rates auto-fetch via computed atom (no useEffect needed)
+  useEffect(
+    wrap(() => {
+      if (currentCurrency && primaryCurrency) {
+        fetchHistoricalRates();
+      }
+    }),
+    [currentCurrency, primaryCurrency, historicalFilter]
+  );
 
   const historicalData = useMemo(() => {
-    const data = historicalRates.length ? historicalRates : historicalRatesCacheAtom();
-    return withChartData(data);
+    if (historicalRates.length) {
+      return withChartData(prepareRates(historicalRates));
+    }
+
+    return withChartData(historicalRatesCacheAtom());
   }, [historicalRates]);
 
-  // Early return for navigation guard
-  if (!currentCurrency || !primaryCurrency) {
-    navigate('/');
-    return null;
-  }
+  useEffect(() => {
+    if (!currentCurrency || !primaryCurrency) {
+      navigate('/');
+    }
+  }, [currentCurrency, primaryCurrency, navigate]);
 
   if (!currentRate) {
     return null;
@@ -76,6 +95,44 @@ export const CurrencyPage = reatomComponent(() => {
         >
           {`${formatMoney(currentRate.rate || 1, currentRate.currency)} ${currentRate.currency} `}
         </Cell>
+
+        {!historicalRatesError && historicalData.length > 0 && (
+          <div
+            style={{
+              display: 'flex',
+              gap: 16,
+            }}
+          >
+            <Chip
+              disabled={isLoadingHistoricalRates}
+              mode={historicalFilter === '3d' ? 'mono' : 'outline'}
+              onClick={wrap(() => onChangeHistoricalFilterAction('3d'))}
+            >
+              3d
+            </Chip>
+            <Chip
+              disabled={isLoadingHistoricalRates}
+              mode={historicalFilter === '1w' ? 'mono' : 'outline'}
+              onClick={wrap(() => onChangeHistoricalFilterAction('1w'))}
+            >
+              1w
+            </Chip>
+            <Chip
+              disabled={isLoadingHistoricalRates}
+              mode={historicalFilter === '1m' ? 'mono' : 'outline'}
+              onClick={wrap(() => onChangeHistoricalFilterAction('1m'))}
+            >
+              1m
+            </Chip>
+            <Chip
+              disabled={isLoadingHistoricalRates}
+              mode={historicalFilter === '1y' ? 'mono' : 'outline'}
+              onClick={wrap(() => onChangeHistoricalFilterAction('1y'))}
+            >
+              1y
+            </Chip>
+          </div>
+        )}
 
         {!historicalRatesError && historicalData.length > 0 && (
           <Section>
