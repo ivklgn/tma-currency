@@ -1,5 +1,8 @@
 import { tmaCurrencyMiniAppError } from './errors.js';
 
+const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+const REQUEST_DELAY_MS = 150;
+
 export async function fetchLiveCurrencies({ source, currencies }) {
   const url = new URL(`${process.env.API_URL}/latest`);
 
@@ -105,15 +108,18 @@ async function fetchHistoricalForDate({ date, source, currencies }) {
 export async function fetchTimeframe({ start_date, end_date, source, currencies }) {
   const dates = getDatesBetween(start_date, end_date);
 
-  let results;
+  const results = [];
   try {
-    results = await Promise.all(
-      dates.map((date) => fetchHistoricalForDate({ date, source, currencies }))
-    );
-  } catch (err) {
-    if (err.name?.includes('tmaCurrencyMiniAppError')) {
-      throw err;
+    for (let i = 0; i < dates.length; i++) {
+      const date = dates[i];
+      const result = await fetchHistoricalForDate({ date, source, currencies });
+      results.push(result);
+
+      if (i < dates.length - 1) {
+        await delay(REQUEST_DELAY_MS);
+      }
     }
+  } catch (err) {
     throw tmaCurrencyMiniAppError('NetworkError', 'Network request failed', {
       originalError: err,
     });
