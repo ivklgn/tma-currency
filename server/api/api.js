@@ -26,17 +26,21 @@ export async function fetchLiveCurrencies({ source, currencies }) {
     });
   }
 
+  const json = await response.json();
+
   if (!response.ok) {
     throw tmaCurrencyMiniAppError(
       'NetworkResponseError',
       'Failed to receive data from external API',
       {
-        extendedParams: { status: response.status, statusText: response.statusText },
+        extendedParams: {
+          status: response.status,
+          statusText: response.statusText,
+          error: json,
+        },
       }
     );
   }
-
-  const json = await response.json();
 
   return {
     success: true,
@@ -81,17 +85,24 @@ async function fetchHistoricalForDate({ date, source, currencies }) {
     },
   });
 
+  const json = await response.json();
+
   if (!response.ok) {
     throw tmaCurrencyMiniAppError(
       'NetworkResponseError',
       'Failed to receive data from external API',
       {
-        extendedParams: { status: response.status, statusText: response.statusText, date },
+        extendedParams: {
+          status: response.status,
+          statusText: response.statusText,
+          date,
+          error: json,
+        },
       }
     );
   }
 
-  return response.json();
+  return json;
 }
 
 export async function fetchTimeframe({ start_date, end_date, source, currencies }) {
