@@ -18,8 +18,8 @@ cp .env.example .env.development
 
 | Variable | Description |
 |----------|-------------|
-| `API_URL` | `https://api.apilayer.com/exchangerates_data` |
-| `API_KEY` | Key from [APILayer](https://apilayer.com/marketplace/exchangerates_data-api) |
+| `API_URL` | `https://api.freecurrencyapi.com/v1` |
+| `API_KEY` | Key from [FreeCurrencyAPI](https://freecurrencyapi.com) |
 | `BOT_TOKEN` | Token from [@BotFather](https://t.me/BotFather) |
 
 ## Vercel Deployment
