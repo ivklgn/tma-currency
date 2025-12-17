@@ -16,7 +16,13 @@ interface ITargetCurrency {
   rate: number;
 }
 
-export const amountAtom = atom(1, 'amountAtom').extend(withLocalStorage('amount'));
+export const amountInputAtom = atom('1', 'amountInputAtom').extend(withLocalStorage('amount'));
+
+export const amountAtom = computed(() => {
+  const input = amountInputAtom();
+  const parsed = parseInt(input);
+  return isNaN(parsed) || parsed < 1 ? 1 : parsed;
+}, 'amountAtom');
 
 export const primaryCurrencyAtom = atom('USD', 'primaryCurrencyAtom').extend(
   withLocalStorage('primaryCurrency')
@@ -39,11 +45,11 @@ export const targetCurrenciesAtom = atom<ITargetCurrency[]>([], 'targetCurrencie
 );
 
 export const onChangeAmountAction = action((event: React.ChangeEvent<HTMLInputElement>) => {
-  amountAtom.set(parseInt(event.currentTarget.value) || 1);
+  amountInputAtom.set(event.currentTarget.value);
 }, 'onChangeAmountAction');
 
 export const onResetAmountAction = action(() => {
-  amountAtom.set(1);
+  amountInputAtom.set('1');
 }, 'onResetAmountAction');
 
 export const onChangePrimaryCurrencyAction = action((currency: string) => {

@@ -17,6 +17,7 @@ import { reatomComponent } from '@reatom/react';
 import { wrap } from '@reatom/core';
 import {
   amountAtom,
+  amountInputAtom,
   targetCurrenciesAtom,
   onChangeAmountAction,
   onChangePrimaryCurrencyAction,
@@ -35,6 +36,7 @@ import './ExchangePage.css';
 
 export const ExchangePage = reatomComponent(() => {
   const amount = amountAtom();
+  const amountInput = amountInputAtom();
   const primaryCurrency = primaryCurrencyAtom();
   const exchangeRatesError = exchangeRatesErrorAtom();
   const targetCurrencies = targetCurrenciesAtom();
@@ -49,15 +51,16 @@ export const ExchangePage = reatomComponent(() => {
             type="number"
             min={1}
             onChange={wrap(onChangeAmountAction)}
-            value={String(amount)}
+            value={amountInput}
             after={
               <Tappable
                 Component="div"
                 style={{
                   display: 'flex',
                 }}
+                onClick={wrap(onResetAmountAction)}
               >
-                <Icon24Close onClick={wrap(onResetAmountAction)} />
+                <Icon24Close />
               </Tappable>
             }
           />
