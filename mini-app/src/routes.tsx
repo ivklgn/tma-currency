@@ -1,7 +1,7 @@
 import type { ComponentType, JSX } from 'react';
 
 import { ExchangePage } from '@/pages/exchange';
-import { CurrencyPage } from '@/pages/currency';
+import { AllPage } from '@/pages/all';
 
 interface Route {
   path: string;
@@ -12,5 +12,5 @@ interface Route {
 
 export const routes: Route[] = [
   { path: '/', Component: ExchangePage },
-  { path: '/exchange-rate', Component: CurrencyPage },
+  { path: '/all', Component: AllPage },
 ];

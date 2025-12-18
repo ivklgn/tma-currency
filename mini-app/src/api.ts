@@ -30,6 +30,16 @@ type EndpointsResponse = {
       rates: Record<string, Record<string, number>>;
     };
   };
+  '/historical': {
+    params: {
+      date: string;
+      source?: string;
+      currencies?: string[];
+    };
+    response: {
+      rates: Record<string, number>;
+    };
+  };
 };
 
 function getAPIUrl(endpoint: keyof EndpointsResponse): string {
