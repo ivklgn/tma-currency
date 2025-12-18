@@ -26,7 +26,14 @@ export const allCurrenciesAtom = atom<ICurrencyRate[]>([], 'allCurrenciesAtom').
 );
 
 export const onChangeDateAction = action((event: React.ChangeEvent<HTMLInputElement>) => {
-  selectedDateAtom.set(event.currentTarget.value);
+  const value = event.currentTarget.value;
+
+  if (value > yesterdayDate) {
+    selectedDateAtom.set(yesterdayDate);
+  } else {
+    selectedDateAtom.set(value);
+  }
+
   fetchAllExchangeRates();
 }, 'onChangeDateAction');
 
