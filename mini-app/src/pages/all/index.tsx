@@ -3,6 +3,7 @@ import { Link } from '@/components/Link/Link.tsx';
 import { Page } from '@/components/Page.tsx';
 import { reatomComponent } from '@reatom/react';
 import { wrap } from '@reatom/core';
+import ReactCountryFlag from 'react-country-flag';
 import {
   allCurrenciesAtom,
   allExchangeRatesErrorAtom,
@@ -11,10 +12,12 @@ import {
   primaryCurrencyAtom,
   amountAtom,
   yesterdayDate,
+  isLoadingAtom,
 } from './model';
 import { formatMoney } from '../../helpers/money';
 import { ErrorPlaceholder } from '@/components/ErrorPlaceholder';
 import { CurrencyRateCell } from '@/components/CurrencyRateCell';
+import { currencyCountryCodes } from '../exchange/country-codes';
 
 import '../exchange/ExchangePage.css';
 
@@ -24,10 +27,26 @@ export const AllPage = reatomComponent(() => {
   const allCurrencies = allCurrenciesAtom();
   const primaryCurrency = primaryCurrencyAtom();
   const amount = amountAtom();
+  const isLoading = isLoadingAtom();
 
   return (
-    <Page>
+    <Page back>
       <List>
+        <Cell
+          before={
+            <ReactCountryFlag
+              countryCode={currencyCountryCodes[primaryCurrency]}
+              style={{
+                fontSize: '2em',
+                lineHeight: '2em',
+              }}
+            />
+          }
+          subtitle="Base currency"
+        >
+          {`${formatMoney(amount, primaryCurrency)} ${primaryCurrency}`}
+        </Cell>
+
         <Section header="Date">
           <Input
             className="input"
@@ -44,19 +63,15 @@ export const AllPage = reatomComponent(() => {
           <Section
             header={`Historical rates for ${formatMoney(amount, primaryCurrency)} ${primaryCurrency}`}
           >
-            {allCurrencies.length === 0 && (
+            {!isLoading && allCurrencies.length === 0 && (
               <Cell>
-                <Text>Loading exchange rates...</Text>
+                <Text>No selected exchange rates.</Text>
               </Cell>
             )}
 
             {allCurrencies.map((rate) => (
               <Link to={`/exchange-rate?currency=${rate.currency}`} key={rate.currency}>
-                <CurrencyRateCell
-                  rate={rate}
-                  primaryCurrency={primaryCurrency}
-                  amount={amount}
-                />
+                <CurrencyRateCell rate={rate} primaryCurrency={primaryCurrency} amount={amount} />
               </Link>
             ))}
           </Section>

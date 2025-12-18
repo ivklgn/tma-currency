@@ -69,3 +69,5 @@ export const allExchangeRatesErrorAtom = computed(
   () => fetchAllExchangeRates.error(),
   'allExchangeRatesErrorAtom'
 );
+
+export const isLoadingAtom = computed(() => fetchAllExchangeRates.pending(), 'isLoadingAtom');
