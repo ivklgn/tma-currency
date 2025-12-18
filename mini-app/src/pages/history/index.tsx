@@ -52,7 +52,10 @@ export const HistoryPage = reatomComponent(() => {
             type="date"
             value={selectedDate}
             max={yesterdayDate}
-            onChange={wrap(onChangeDateAction)}
+            onChange={(e) => {
+              wrap(onChangeDateAction)(e);
+              (e.target as HTMLInputElement).blur();
+            }}
           />
         </Section>
 
@@ -62,7 +65,7 @@ export const HistoryPage = reatomComponent(() => {
           <Section
             header={`Historical rates for ${formatMoney(amount, primaryCurrency)} ${primaryCurrency}`}
           >
-            {isLoading && (
+            {isLoading > 0 && (
               <div className="spinnerContainer">
                 <Spinner size="m" />
               </div>
