@@ -1,5 +1,4 @@
 import { Text, Section, Cell, List, Input } from '@telegram-apps/telegram-ui';
-import { Link } from '@/components/Link/Link.tsx';
 import { Page } from '@/components/Page.tsx';
 import { reatomComponent } from '@reatom/react';
 import { wrap } from '@reatom/core';
@@ -21,7 +20,7 @@ import { currencyCountryCodes } from '../exchange/country-codes';
 
 import '../exchange/ExchangePage.css';
 
-export const AllPage = reatomComponent(() => {
+export const HistoryPage = reatomComponent(() => {
   const selectedDate = selectedDateAtom();
   const exchangeRatesError = allExchangeRatesErrorAtom();
   const allCurrencies = allCurrenciesAtom();
@@ -70,13 +69,16 @@ export const AllPage = reatomComponent(() => {
             )}
 
             {allCurrencies.map((rate) => (
-              <Link to={`/exchange-rate?currency=${rate.currency}`} key={rate.currency}>
-                <CurrencyRateCell rate={rate} primaryCurrency={primaryCurrency} amount={amount} />
-              </Link>
+              <CurrencyRateCell
+                key={rate.currency}
+                rate={rate}
+                primaryCurrency={primaryCurrency}
+                amount={amount}
+              />
             ))}
           </Section>
         )}
       </List>
     </Page>
   );
-}, 'AllPage');
+}, 'HistoryPage');

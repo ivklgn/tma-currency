@@ -1,7 +1,7 @@
 import type { ComponentType, JSX } from 'react';
 
 import { ExchangePage } from '@/pages/exchange';
-import { AllPage } from '@/pages/all';
+import { HistoryPage } from '@/pages/history';
 
 interface Route {
   path: string;
@@ -12,5 +12,5 @@ interface Route {
 
 export const routes: Route[] = [
   { path: '/', Component: ExchangePage },
-  { path: '/all', Component: AllPage },
+  { path: '/history', Component: HistoryPage },
 ];

@@ -94,7 +94,7 @@ export const ExchangePage = reatomComponent(() => {
             )}
 
             {targetCurrencies.map((rate) => (
-              <Link to="/all" key={rate.currency}>
+              <Link to="/history" key={rate.currency}>
                 <CurrencyRateCell
                   rate={rate}
                   primaryCurrency={primaryCurrency}
