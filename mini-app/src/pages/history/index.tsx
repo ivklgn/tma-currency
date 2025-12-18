@@ -52,10 +52,7 @@ export const HistoryPage = reatomComponent(() => {
             type="date"
             value={selectedDate}
             max={yesterdayDate}
-            onChange={(e) => {
-              wrap(onChangeDateAction)(e);
-              (e.target as HTMLInputElement).blur();
-            }}
+            onChange={wrap(onChangeDateAction)}
           />
         </Section>
 
