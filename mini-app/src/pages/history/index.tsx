@@ -1,4 +1,4 @@
-import { Text, Section, Cell, List, Input } from '@telegram-apps/telegram-ui';
+import { Text, Section, Cell, List, Input, Spinner } from '@telegram-apps/telegram-ui';
 import { Page } from '@/components/Page.tsx';
 import { reatomComponent } from '@reatom/react';
 import { wrap } from '@reatom/core';
@@ -62,6 +62,12 @@ export const HistoryPage = reatomComponent(() => {
           <Section
             header={`Historical rates for ${formatMoney(amount, primaryCurrency)} ${primaryCurrency}`}
           >
+            {isLoading && (
+              <div className="spinnerContainer">
+                <Spinner size="m" />
+              </div>
+            )}
+
             {!isLoading && allCurrencies.length === 0 && (
               <Cell>
                 <Text>No selected exchange rates.</Text>
@@ -74,6 +80,7 @@ export const HistoryPage = reatomComponent(() => {
                 rate={rate}
                 primaryCurrency={primaryCurrency}
                 amount={amount}
+                className="noHover"
               />
             ))}
           </Section>

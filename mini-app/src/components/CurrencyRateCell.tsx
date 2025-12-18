@@ -9,6 +9,7 @@ interface CurrencyRateCellProps {
   primaryCurrency: string;
   amount: number;
   after?: React.ReactNode;
+  className?: string;
 }
 
 export const CurrencyRateCell = ({
@@ -16,8 +17,10 @@ export const CurrencyRateCell = ({
   primaryCurrency,
   amount,
   after,
+  className,
 }: CurrencyRateCellProps) => (
   <Cell
+    className={className}
     before={
       <ReactCountryFlag
         countryCode={currencyCountryCodes[rate.currency]}

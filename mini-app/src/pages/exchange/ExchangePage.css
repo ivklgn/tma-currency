@@ -27,3 +27,13 @@
 .chevronDown {
   color: var(--tgui--secondary_hint_color);
 }
+
+.noHover {
+  pointer-events: none;
+}
+
+.spinnerContainer {
+  display: flex;
+  justify-content: center;
+  padding: 16px;
+}
