@@ -3,17 +3,23 @@ import { fetcher } from '../../api';
 import { isProgressVisibleAtom } from '@/features/ProgressBar/model';
 import { currencies } from '../exchange/currencies';
 import { formatDate } from '../../helpers/date';
+import { primaryCurrencyAtom, amountAtom } from '../exchange/model';
+import { ICurrencyRate } from '@/types/currency';
+import { transformRates } from '@/helpers/rates';
 
-const BASE_CURRENCY = 'USD';
+export { primaryCurrencyAtom, amountAtom };
 
-interface IAllCurrency {
-  currency: string;
-  rate: number;
-}
+const getYesterday = () => {
+  const date = new Date();
+  date.setDate(date.getDate() - 1);
+  return date;
+};
 
-export const selectedDateAtom = atom(formatDate(new Date()), 'selectedDateAtom');
+export const yesterdayDate = formatDate(getYesterday());
 
-export const allCurrenciesAtom = atom<IAllCurrency[]>([], 'allCurrenciesAtom').extend(
+export const selectedDateAtom = atom(yesterdayDate, 'selectedDateAtom');
+
+export const allCurrenciesAtom = atom<ICurrencyRate[]>([], 'allCurrenciesAtom').extend(
   withConnectHook(() => {
     fetchAllExchangeRates();
   })
@@ -29,29 +35,28 @@ export const fetchAllExchangeRates = action(async () => {
 
   try {
     const selectedDate = selectedDateAtom();
+    const primaryCurrency = primaryCurrencyAtom();
 
     await wrap(sleep(400));
 
     const { rates } = await wrap(
       fetcher<'/historical'>('/historical', {
         date: selectedDate,
-        source: BASE_CURRENCY,
+        source: primaryCurrency,
       })
     );
 
-    const result = Object.entries(rates)
-      .filter(([currency]) => currency in currencies && currency !== BASE_CURRENCY)
-      .map(([currency, rate]) => ({
-        currency,
-        rate: rate > 0 ? rate : 1,
-      }));
+    const result = transformRates(
+      rates,
+      (currency) => currency in currencies && currency !== primaryCurrency
+    );
 
     allCurrenciesAtom.set(result);
     return result;
   } finally {
     isProgressVisibleAtom.set(false);
   }
-}, 'fetchAllExchangeRates').extend(withAsyncData({ initState: [] as IAllCurrency[] }));
+}, 'fetchAllExchangeRates').extend(withAsyncData({ initState: [] as ICurrencyRate[] }));
 
 export const allExchangeRatesErrorAtom = computed(
   () => fetchAllExchangeRates.error(),

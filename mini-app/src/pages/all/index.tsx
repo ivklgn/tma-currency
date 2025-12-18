@@ -1,5 +1,4 @@
-import { Text, Section, Cell, List, Placeholder, Input } from '@telegram-apps/telegram-ui';
-import ReactCountryFlag from 'react-country-flag';
+import { Text, Section, Cell, List, Input } from '@telegram-apps/telegram-ui';
 import { Link } from '@/components/Link/Link.tsx';
 import { Page } from '@/components/Page.tsx';
 import { reatomComponent } from '@reatom/react';
@@ -9,9 +8,13 @@ import {
   allExchangeRatesErrorAtom,
   selectedDateAtom,
   onChangeDateAction,
+  primaryCurrencyAtom,
+  amountAtom,
+  yesterdayDate,
 } from './model';
-import { currencyCountryCodes } from '../exchange/country-codes';
 import { formatMoney } from '../../helpers/money';
+import { ErrorPlaceholder } from '@/components/ErrorPlaceholder';
+import { CurrencyRateCell } from '@/components/CurrencyRateCell';
 
 import '../exchange/ExchangePage.css';
 
@@ -19,6 +22,8 @@ export const AllPage = reatomComponent(() => {
   const selectedDate = selectedDateAtom();
   const exchangeRatesError = allExchangeRatesErrorAtom();
   const allCurrencies = allCurrenciesAtom();
+  const primaryCurrency = primaryCurrencyAtom();
+  const amount = amountAtom();
 
   return (
     <Page>
@@ -28,22 +33,17 @@ export const AllPage = reatomComponent(() => {
             className="input"
             type="date"
             value={selectedDate}
+            max={yesterdayDate}
             onChange={wrap(onChangeDateAction)}
           />
         </Section>
 
-        {exchangeRatesError && (
-          <Placeholder header="Oops, something went wrong" description="Reload app or try later">
-            <img
-              alt="Telegram sticker"
-              src="https://xelene.me/telegram.gif"
-              style={{ display: 'block', width: '144px', height: '144px' }}
-            />
-          </Placeholder>
-        )}
+        {exchangeRatesError && <ErrorPlaceholder />}
 
         {!exchangeRatesError && (
-          <Section header="All exchange rates">
+          <Section
+            header={`Historical rates for ${formatMoney(amount, primaryCurrency)} ${primaryCurrency}`}
+          >
             {allCurrencies.length === 0 && (
               <Cell>
                 <Text>Loading exchange rates...</Text>
@@ -52,20 +52,11 @@ export const AllPage = reatomComponent(() => {
 
             {allCurrencies.map((rate) => (
               <Link to={`/exchange-rate?currency=${rate.currency}`} key={rate.currency}>
-                <Cell
-                  before={
-                    <ReactCountryFlag
-                      countryCode={currencyCountryCodes[rate.currency]}
-                      style={{
-                        fontSize: '2em',
-                        lineHeight: '2em',
-                      }}
-                    />
-                  }
-                  subtitle={`1 USD = ${formatMoney(rate.rate, rate.currency)} ${rate.currency}`}
-                >
-                  {formatMoney(rate.rate, rate.currency)} {rate.currency}
-                </Cell>
+                <CurrencyRateCell
+                  rate={rate}
+                  primaryCurrency={primaryCurrency}
+                  amount={amount}
+                />
               </Link>
             ))}
           </Section>

@@ -1,16 +1,6 @@
-import {
-  Text,
-  Section,
-  Cell,
-  List,
-  ButtonCell,
-  Input,
-  Tappable,
-  Placeholder,
-} from '@telegram-apps/telegram-ui';
+import { Text, Section, Cell, List, ButtonCell, Input, Tappable } from '@telegram-apps/telegram-ui';
 import { Icon28AddCircle } from '@telegram-apps/telegram-ui/dist/icons/28/add_circle';
 import { Icon20ChevronDown } from '@telegram-apps/telegram-ui/dist/icons/20/chevron_down';
-import ReactCountryFlag from 'react-country-flag';
 import { Page } from '@/components/Page.tsx';
 import { Link } from '@/components/Link/Link.tsx';
 import { reatomComponent } from '@reatom/react';
@@ -27,10 +17,10 @@ import {
   primaryCurrencyAtom,
   exchangeRatesErrorAtom,
 } from './model';
-import { currencyCountryCodes } from './country-codes';
 import { CurrencySelectModal } from '../../features/CurrencySelectModal';
 import { Icon24Close } from '../../components/patched-icons';
-import { formatMoney } from '../../helpers/money';
+import { ErrorPlaceholder } from '@/components/ErrorPlaceholder';
+import { CurrencyRateCell } from '@/components/CurrencyRateCell';
 
 import './ExchangePage.css';
 
@@ -88,15 +78,7 @@ export const ExchangePage = reatomComponent(() => {
           />
         </Section>
 
-        {exchangeRatesError && (
-          <Placeholder header="Oops, something went wrong" description="Reload app or try later">
-            <img
-              alt="Telegram sticker"
-              src="https://xelene.me/telegram.gif"
-              style={{ display: 'block', width: '144px', height: '144px' }}
-            />
-          </Placeholder>
-        )}
+        {exchangeRatesError && <ErrorPlaceholder />}
 
         {!exchangeRatesError && (
           <Section header="Exchange rate">
@@ -113,16 +95,10 @@ export const ExchangePage = reatomComponent(() => {
 
             {targetCurrencies.map((rate) => (
               <Link to="/all" key={rate.currency}>
-                <Cell
-                  before={
-                    <ReactCountryFlag
-                      countryCode={currencyCountryCodes[rate.currency]}
-                      style={{
-                        fontSize: '2em',
-                        lineHeight: '2em',
-                      }}
-                    />
-                  }
+                <CurrencyRateCell
+                  rate={rate}
+                  primaryCurrency={primaryCurrency}
+                  amount={amount || 1}
                   after={
                     <Tappable
                       Component="div"
@@ -134,10 +110,7 @@ export const ExchangePage = reatomComponent(() => {
                       <Icon24Close />
                     </Tappable>
                   }
-                  subtitle={`1 ${primaryCurrency} = ${formatMoney(rate.rate, rate.currency)} ${rate.currency}`}
-                >
-                  {formatMoney(rate.rate * (amount || 1), rate.currency)} {rate.currency}
-                </Cell>
+                />
               </Link>
             ))}
           </Section>

@@ -10,11 +10,8 @@ import {
 } from '@reatom/core';
 import { fetcher } from '../../api';
 import { isProgressVisibleAtom } from '@/features/ProgressBar/model';
-
-interface ITargetCurrency {
-  currency: string;
-  rate: number;
-}
+import { ICurrencyRate } from '@/types/currency';
+import { transformRates } from '@/helpers/rates';
 
 export const amountInputAtom = atom('1', 'amountInputAtom').extend(withLocalStorage('amount'));
 
@@ -30,7 +27,7 @@ export const primaryCurrencyAtom = atom('USD', 'primaryCurrencyAtom').extend(
 
 export const targetCurrencyIdsAtom = atom<string[]>([], 'targetCurrencyIdsAtom');
 
-export const targetCurrenciesAtom = atom<ITargetCurrency[]>([], 'targetCurrenciesAtom').extend(
+export const targetCurrenciesAtom = atom<ICurrencyRate[]>([], 'targetCurrenciesAtom').extend(
   withLocalStorage('targetCurrencies'),
   withConnectHook(() => {
     const targetCurrencies = targetCurrenciesAtom();
@@ -101,10 +98,7 @@ export const fetchExchangeRates = action(
         fetcher<'/live'>('/live', { source: primaryCurrency, currencies: targetCurrencies })
       );
 
-      const result = Object.entries(rates).map(([currency, rate]) => ({
-        currency,
-        rate: rate > 0 ? rate : 1,
-      }));
+      const result = transformRates(rates);
 
       targetCurrenciesAtom.set(result);
       return result;
@@ -113,7 +107,7 @@ export const fetchExchangeRates = action(
     }
   },
   'fetchExchangeRates'
-).extend(withAsyncData({ initState: [] as ITargetCurrency[] }));
+).extend(withAsyncData({ initState: [] as ICurrencyRate[] }));
 
 export const exchangeRatesErrorAtom = computed(
   () => fetchExchangeRates.error(),
