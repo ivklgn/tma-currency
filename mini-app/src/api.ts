@@ -19,17 +19,6 @@ type EndpointsResponse = {
       rates: Record<string, number>;
     };
   };
-  '/timeframe': {
-    params: {
-      start_date: string;
-      end_date: string;
-      currencies: string[];
-      source: string;
-    };
-    response: {
-      rates: Record<string, Record<string, number>>;
-    };
-  };
   '/historical': {
     params: {
       date: string;

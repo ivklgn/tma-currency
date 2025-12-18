@@ -1,5 +1,5 @@
 import Fastify from 'fastify';
-import { fetchHistorical, fetchLiveCurrencies, fetchTimeframe } from './api.js';
+import { fetchHistorical, fetchLiveCurrencies } from './api.js';
 import cors from '@fastify/cors';
 import { validate } from '@telegram-apps/init-data-node';
 import { tmaCurrencyMiniAppError } from './errors.js';
@@ -91,34 +91,3 @@ app.get(
   }
 );
 
-app.get(
-  '/timeframe',
-  {
-    schema: {
-      querystring: {
-        type: 'object',
-        properties: {
-          start_date: { type: 'string' },
-          end_date: { type: 'string' },
-          source: { type: 'string' },
-          currencies: { type: 'string' },
-        },
-        required: ['start_date', 'end_date'],
-      },
-    },
-  },
-  async (request, reply) => {
-    const { start_date, end_date, source, currencies } = request.query;
-
-    try {
-      const response = await fetchTimeframe({ start_date, end_date, currencies, source });
-
-      return reply.send(response);
-    } catch (error) {
-      tmaCurrencyMiniAppError('DataHandlingError', 'Failed to fetch data', {
-        originalError: error,
-      }).emit();
-      return reply.status(500).send({ error: 'Failed to fetch data' });
-    }
-  }
-);
