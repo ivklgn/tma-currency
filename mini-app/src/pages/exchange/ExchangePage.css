@@ -2,6 +2,24 @@
   border: 1px solid var(--tgui--secondary_hint_color);
 }
 
+/* iOS date input fixes */
+.input input[type="date"] {
+  -webkit-appearance: none;
+  appearance: none;
+  color: var(--tgui--text_color);
+  background: transparent;
+  min-height: 24px;
+}
+
+.input input[type="date"]::-webkit-date-and-time-value {
+  text-align: left;
+}
+
+.input input[type="date"]::-webkit-calendar-picker-indicator {
+  opacity: 0.6;
+  cursor: pointer;
+}
+
 .select {
   border: 1px solid var(--tgui--secondary_hint_color);
 }

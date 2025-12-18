@@ -12,6 +12,7 @@ import { Icon28AddCircle } from '@telegram-apps/telegram-ui/dist/icons/28/add_ci
 import { Icon20ChevronDown } from '@telegram-apps/telegram-ui/dist/icons/20/chevron_down';
 import ReactCountryFlag from 'react-country-flag';
 import { Page } from '@/components/Page.tsx';
+import { Link } from '@/components/Link/Link.tsx';
 import { reatomComponent } from '@reatom/react';
 import { wrap } from '@reatom/core';
 import {
@@ -111,32 +112,33 @@ export const ExchangePage = reatomComponent(() => {
             )}
 
             {targetCurrencies.map((rate) => (
-              <Cell
-                key={rate.currency}
-                before={
-                  <ReactCountryFlag
-                    countryCode={currencyCountryCodes[rate.currency]}
-                    style={{
-                      fontSize: '2em',
-                      lineHeight: '2em',
-                    }}
-                  />
-                }
-                after={
-                  <Tappable
-                    Component="div"
-                    style={{
-                      display: 'flex',
-                    }}
-                    onClick={wrap(() => onDeleteTargetCurrencyAction(rate.currency))}
-                  >
-                    <Icon24Close />
-                  </Tappable>
-                }
-                subtitle={`1 ${primaryCurrency} = ${formatMoney(rate.rate, rate.currency)} ${rate.currency}`}
-              >
-                {formatMoney(rate.rate * (amount || 1), rate.currency)} {rate.currency}
-              </Cell>
+              <Link to="/all" key={rate.currency}>
+                <Cell
+                  before={
+                    <ReactCountryFlag
+                      countryCode={currencyCountryCodes[rate.currency]}
+                      style={{
+                        fontSize: '2em',
+                        lineHeight: '2em',
+                      }}
+                    />
+                  }
+                  after={
+                    <Tappable
+                      Component="div"
+                      style={{
+                        display: 'flex',
+                      }}
+                      onClick={wrap(() => onDeleteTargetCurrencyAction(rate.currency))}
+                    >
+                      <Icon24Close />
+                    </Tappable>
+                  }
+                  subtitle={`1 ${primaryCurrency} = ${formatMoney(rate.rate, rate.currency)} ${rate.currency}`}
+                >
+                  {formatMoney(rate.rate * (amount || 1), rate.currency)} {rate.currency}
+                </Cell>
+              </Link>
             ))}
           </Section>
         )}
