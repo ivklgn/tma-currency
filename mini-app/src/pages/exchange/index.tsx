@@ -105,7 +105,11 @@ export const ExchangePage = reatomComponent(() => {
                       style={{
                         display: 'flex',
                       }}
-                      onClick={wrap(() => onDeleteTargetCurrencyAction(rate.currency))}
+                      onClick={wrap((e: React.MouseEvent) => {
+                        e.stopPropagation();
+                        e.preventDefault();
+                        onDeleteTargetCurrencyAction(rate.currency);
+                      })}
                     >
                       <Icon24Close />
                     </Tappable>
